@@ -1,0 +1,100 @@
+schema = "sr_filter.external_checkpoint_inventory.v1"
+artifact_status = "pending_authenticated_upload"
+remote_repo_type = "dataset"
+remote_revision_status = "pending"
+security_warning = "Checkpoint inputs are Python pickles. Sanitize and verify only trusted local inputs; consumers must verify SHA-256 before loading."
+staging_command = '''python scripts/curation/sanitize_checkpoints.py --inventory configs/experiments/external_checkpoint_inventory.toml --staging-root "${SR_FILTER_EXTERNAL_STAGING_ROOT:?set SR_FILTER_EXTERNAL_STAGING_ROOT}" --public-manifest artifacts/external_checkpoints.json --verify-runtime --acknowledge-trusted-pickle-inputs'''
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/source_step_002500"
+role = "source"
+branch_seed = 0
+status = "complete"
+environment_variable = "SR_FILTER_BRANCH_SEED0_CKPT"
+expected_original_sha256 = "8e892b5aa13aeb391cd269d6f1201a6ba7f8832027e3aaca508253ec14e3aca5"
+expected_checkpoint_step = 50
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_002450"
+staged_path = "checkpoints/j1j2_no_symmetry_source_step_002500.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/source_step_001800"
+role = "source"
+branch_seed = 1
+status = "complete"
+environment_variable = "SR_FILTER_BRANCH_SEED1_CKPT"
+expected_original_sha256 = "b68eade1b8d3c9a6d10f57ccf130fdf52119a877f623a95d8062992c2462d319"
+expected_checkpoint_step = 1800
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_001800"
+staged_path = "checkpoints/j1j2_no_symmetry_source_step_001800.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/branch2500/seed0/sr_final"
+role = "final_endpoint"
+branch_seed = 0
+arm = "sr"
+status = "complete"
+environment_variable = "SR_FILTER_SEED0_SR_CKPT"
+expected_original_sha256 = "0273e2286ef0fd10ee599439b28552fb3b40a56d7bc667a89c3e251989903c34"
+expected_checkpoint_step = 550
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_002500"
+staged_path = "checkpoints/j1j2_no_symmetry_branch2500_seed0_sr_final.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/branch2500/seed0/spring_final"
+role = "final_endpoint"
+branch_seed = 0
+arm = "spring"
+status = "complete"
+environment_variable = "SR_FILTER_SEED0_SPRING_CKPT"
+expected_original_sha256 = "5b8226f92b117ed5eda03c619953d296769bf707e27b09156de39eec3449926c"
+expected_checkpoint_step = 500
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_002500"
+staged_path = "checkpoints/j1j2_no_symmetry_branch2500_seed0_spring_final.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/branch2500/seed0/ms_sr_final"
+role = "final_endpoint"
+branch_seed = 0
+arm = "ms_sr"
+environment_variable = "SR_FILTER_SEED0_MSSR_CKPT"
+status = "complete"
+expected_original_sha256 = "9305640d2ac5764610e4da3db6494029af33b449a9fbf69ad1aefb2e798a6a9f"
+expected_checkpoint_step = 125
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_002500"
+staged_path = "checkpoints/j1j2_no_symmetry_branch2500_seed0_ms_sr_final.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/branch1800/seed1/sr_final"
+role = "final_endpoint"
+branch_seed = 1
+arm = "sr"
+status = "complete"
+environment_variable = "SR_FILTER_SEED1_SR_CKPT"
+expected_original_sha256 = "b8308492bd1fed813963b1c65b8f3bac213bd41022e33e76a09e678fdc82c120"
+expected_checkpoint_step = 500
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_001800"
+staged_path = "checkpoints/j1j2_no_symmetry_branch1800_seed1_sr_final.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/branch1800/seed1/spring_final"
+role = "final_endpoint"
+branch_seed = 1
+arm = "spring"
+status = "complete"
+environment_variable = "SR_FILTER_SEED1_SPRING_CKPT"
+expected_original_sha256 = "adc6ddabb46e8c0c9315879197e7706fe3bc8e56f4205c66dc7f084ce69ac225"
+expected_checkpoint_step = 500
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_001800"
+staged_path = "checkpoints/j1j2_no_symmetry_branch1800_seed1_spring_final.pkl"
+
+[[checkpoints]]
+id = "j1j2/no_symmetry/branch1800/seed1/ms_sr_final"
+role = "final_endpoint"
+branch_seed = 1
+arm = "ms_sr"
+status = "complete"
+environment_variable = "SR_FILTER_SEED1_MSSR_CKPT"
+expected_original_sha256 = "43296f4261a95d4c3290d9c1c5e41bcc98c1f8c1fb7f0009267dfb05cdd68c48"
+expected_checkpoint_step = 125
+absolute_path_replacement_id = "j1j2/no_symmetry/source_step_001800"
+staged_path = "checkpoints/j1j2_no_symmetry_branch1800_seed1_ms_sr_final.pkl"

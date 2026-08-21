@@ -1,0 +1,85 @@
+{
+  "camera_ready_gate": true,
+  "completed_endpoint_runs": {
+    "ms_sr": 2,
+    "spring": 2,
+    "sr": 2
+  },
+  "curve_rows": {
+    "ms_sr": 125,
+    "shared_sr": 550,
+    "spring": 500,
+    "sr": 500
+  },
+  "endpoint_error_column": "sigma_per_site",
+  "endpoint_error_definition": "max(round-level SE, eight-round block SE)",
+  "endpoint_replica_consistency": {
+    "ms_sr": {
+      "max_allowed_replica_difference_z": 5.0,
+      "replica_difference_z": 0.6084887914114453,
+      "status": "pass"
+    },
+    "spring": {
+      "max_allowed_replica_difference_z": 5.0,
+      "replica_difference_z": 0.9904193341072066,
+      "status": "pass"
+    },
+    "sr": {
+      "max_allowed_replica_difference_z": 5.0,
+      "replica_difference_z": 1.391396855992288,
+      "status": "pass"
+    }
+  },
+  "equal_sampling_budget_units": 500,
+  "excluded_legacy_spring_aggregate": true,
+  "experiment_id": "online.j1j2.no_symmetry.branch2500.seed0.v1",
+  "ms_sr_protocol_audit": {
+    "base_driver_sampling_calls": 0,
+    "base_driver_solves": 0,
+    "candidate_batches_per_update": 4,
+    "candidate_sample_counts_final_update": [
+      8192,
+      8192,
+      8192,
+      8192
+    ],
+    "candidate_solves_per_update": 4,
+    "checkpoint_sha256": "9305640d2ac5764610e4da3db6494029af33b449a9fbf69ad1aefb2e798a6a9f",
+    "k": 4,
+    "lambda_grid": [
+      0.01,
+      0.001,
+      0.0001,
+      1e-05
+    ],
+    "lambda_policy": "fixed_grid",
+    "optimizer_updates": 125,
+    "samples_per_candidate_batch": 8192,
+    "sampling_solve_units": 500,
+    "stacking_protocol": "exact_leave_one_batch_out",
+    "status": "audited_complete",
+    "update_protocol": "fixed_grid_exact_loo",
+    "weight_fit_sampling_calls": 0,
+    "weight_fit_solves": 0
+  },
+  "required_endpoint_replicas": {
+    "rounds_each": 512,
+    "runs_per_arm": 2,
+    "seeds": [
+      12345,
+      98765
+    ]
+  },
+  "schema_version": 1,
+  "spring_high_precision_evaluations": "complete",
+  "status": "complete",
+  "supplementary_endpoint_diagnostics": {
+    "spring_128_round": 1
+  },
+  "target_curve_rows": {
+    "ms_sr": 125,
+    "shared_sr": 550,
+    "spring": 500,
+    "sr": 500
+  }
+}

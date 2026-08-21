@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sr-filtering-nqs"
+version = "0.1.0"
+description = "Reproducible SR-filtering experiments for neural quantum states"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = "Apache-2.0"
+authors = [
+    { name = "Tak Hur", email = "takh0404@yonsei.ac.kr" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "einops>=0.6",
+    "flax>=0.10,<0.13",
+    "jax==0.7.2",
+    "matplotlib>=3.8",
+    "netket>=3.21,<3.22",
+    "numba>=0.61",
+    "nqxpack",
+    "numpy",
+    "optax",
+    "orjson",
+    "scipy",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+cuda12 = [
+    "jax[cuda12]==0.7.2; sys_platform == 'linux'",
+]
+dev = [
+    "build>=1.2",
+    "pytest>=8,<10",
+    "ruff>=0.11",
+]
+
+[project.scripts]
+sr-filter = "sr_filtering_nqs.cli:main"
+
+[project.urls]
+Repository = "https://github.com/takh04/sr_filter"
+Issues = "https://github.com/takh04/sr_filter/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"nqs_support_core._src.external.neural_tangents" = ["LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+tmp_path_retention_policy = "failed"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

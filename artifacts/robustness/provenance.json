@@ -1,0 +1,12 @@
+{
+  "category": "robustness",
+  "oracle_label_policy": "Grid-best shifts were selected on the same validation stream used for reporting and are never labeled independently held out.",
+  "portable_schema": "sr_filter.robustness.v1",
+  "private_paths_retained": false,
+  "schema_version": 1,
+  "statistics": "Summary standard deviations are population standard deviations across checkpoint-level aggregates.",
+  "trusted_input_checksums": "source_input_checksums.csv",
+  "trusted_input_count": 550,
+  "trusted_source_revision": "f0f8803c35c188655d6e29f4896b620fa9cd6eca",
+  "trusted_source_worktree_was_dirty": true
+}

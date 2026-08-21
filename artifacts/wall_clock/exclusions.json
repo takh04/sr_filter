@@ -1,0 +1,13 @@
+{
+  "excluded": [
+    {
+      "item": "process peak-memory comparison",
+      "reason": "reported allocator high-water marks include process/JIT lifetime and are not isolated step peaks"
+    },
+    {
+      "item": "full training throughput claim",
+      "reason": "benchmark intentionally used apply_update=false and fixed parameters"
+    }
+  ],
+  "schema_version": 1
+}

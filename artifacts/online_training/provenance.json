@@ -1,0 +1,7 @@
+{
+  "category": "online_training",
+  "portable_schema": "sr_filter.online_training.v1",
+  "private_paths_retained": false,
+  "schema_version": 1,
+  "trusted_source_revision": "f0f8803c35c188655d6e29f4896b620fa9cd6eca"
+}

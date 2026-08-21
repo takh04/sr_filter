@@ -1,0 +1,30 @@
+{
+  "excluded_inputs": [
+    {
+      "item": "legacy partial small-scale online comparison",
+      "reason": "explicitly excluded from camera-ready evidence"
+    },
+    {
+      "item": "external-cache-dependent online pilots",
+      "reason": "external-cache dependence and best-observed energy references prevent clean independent audit"
+    },
+    {
+      "item": "dense and learning-rate development probes",
+      "reason": "development probes or one-step/partial attempts"
+    },
+    {
+      "item": "legacy combined SPRING endpoint aggregate",
+      "reason": "claimed 8,388,608-sample aggregate cannot be exactly reconstructed from retained round-level data",
+      "replacement": "audited 128-round diagnostic in branch_seed0/endpoint_diagnostics.csv"
+    },
+    {
+      "item": "seed-1 SR tail after step 500, discontinuous exploratory MS-SR, and stopped extra-batch/non-LOO continuation",
+      "reason": "outside or incompatible with the approved exact-LOO equal-500-budget controlled branch contract"
+    },
+    {
+      "item": "legacy seed-0 125-update MS-SR callback run",
+      "reason": "used a base batch/solve and a separate weight-fit batch in addition to four candidate batches; replaced only by branch_seed0/mssr_exact"
+    }
+  ],
+  "schema_version": 1
+}
