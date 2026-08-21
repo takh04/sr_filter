@@ -1,0 +1,126 @@
+{
+  "inputs": [
+    {
+      "path": "artifacts/online_training/branch_seed0/endpoint_evaluations.csv",
+      "sha256": "a812c3acc67a0a55d4f665368c08eb33764f34cfc5643aa18483a5470c10d242"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed0/provenance.json",
+      "sha256": "9c3f41cc831c717fea8d8f053db5d6f7c0498238dbb54586b8b438045cafbf16"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed0/status.json",
+      "sha256": "8c006fdf67741d4498893e449f14fd88254a3484bf872c67cf2d9d50d6941aec"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed0/training_curve.csv",
+      "sha256": "5238f6dbaa6b545b4280b68ae8888cb17cd288dcaf02927465fca79dd88c83f4"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed1/endpoint_evaluations.csv",
+      "sha256": "40f8e0e92507457cd29f86eca793b31a89584994e5e4e71f41bb68a974782bbc"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed1/provenance.json",
+      "sha256": "e911bf1d333f7b7b9799fcae142a65f36286ed78adbbdaf2eebfccc09757fe20"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed1/status.json",
+      "sha256": "7f04c6c65251e3f81a18e77146d9d1c704a36887c294a02b5cb0eb62ca149656"
+    },
+    {
+      "path": "artifacts/online_training/branch_seed1/training_curve.csv",
+      "sha256": "3033a68ddc5302500424d22d9ae351b868474f4db6b4056794af206b6a2333d6"
+    }
+  ],
+  "manifest_sha256": "b9f31099f2e2e648349970aea15cec1e28f65912adc3134e7d1186184c060437",
+  "max_endpoint_replica_difference_z": 5.0,
+  "outputs": [
+    "paper/figures/figure5_equal_budget_online.pdf",
+    "paper/generated/online_comparison_results.tex",
+    "paper/generated/online_protocol_table.tex"
+  ],
+  "ready": true,
+  "required_branch_count": 2,
+  "schema_version": 1,
+  "validated_branches": [
+    {
+      "best_vs_next_best_gap_per_site": 1.3339699053371845e-05,
+      "endpoint_energy_per_site": {
+        "ms_sr": -1.9944364847746519,
+        "spring": -1.9939130320872236,
+        "sr": -1.9944498244737052
+      },
+      "endpoint_ordering_lower_is_better": [
+        "sr",
+        "ms_sr",
+        "spring"
+      ],
+      "endpoint_replica_difference_z": {
+        "ms_sr": 0.6084887914114453,
+        "spring": 0.9904193341072066,
+        "sr": 1.391396855992288
+      },
+      "endpoint_samples": {
+        "ms_sr": 8388608,
+        "spring": 8388608,
+        "sr": 8388608
+      },
+      "endpoint_standard_error_per_site": {
+        "ms_sr": 7.058510895664121e-06,
+        "spring": 8.361193893751749e-06,
+        "sr": 6.8557343338102965e-06
+      },
+      "id": "branch_seed0",
+      "ms_sr_minus_others_combined_se_z": {
+        "spring": -47.83789514150901,
+        "sr": 1.3556739888834664
+      },
+      "ms_sr_minus_others_per_site": {
+        "spring": -0.0005234526874282608,
+        "sr": 1.3339699053371845e-05
+      },
+      "seed": 0,
+      "source_checkpoint_step": 2500
+    },
+    {
+      "best_vs_next_best_gap_per_site": 1.888966949126214e-05,
+      "endpoint_energy_per_site": {
+        "ms_sr": -1.9942722818330822,
+        "spring": -1.9940981558426487,
+        "sr": -1.994253392163591
+      },
+      "endpoint_ordering_lower_is_better": [
+        "ms_sr",
+        "sr",
+        "spring"
+      ],
+      "endpoint_replica_difference_z": {
+        "ms_sr": 2.061114259483458,
+        "spring": 0.33127454837651416,
+        "sr": 0.4609444185449711
+      },
+      "endpoint_samples": {
+        "ms_sr": 8388608,
+        "spring": 8388608,
+        "sr": 8388608
+      },
+      "endpoint_standard_error_per_site": {
+        "ms_sr": 7.83058893851455e-06,
+        "spring": 8.021629253188401e-06,
+        "sr": 7.884900956912682e-06
+      },
+      "id": "branch_seed1",
+      "ms_sr_minus_others_combined_se_z": {
+        "spring": -15.53306004879401,
+        "sr": -1.69984311220076
+      },
+      "ms_sr_minus_others_per_site": {
+        "spring": -0.00017412599043353794,
+        "sr": -1.888966949126214e-05
+      },
+      "seed": 1,
+      "source_checkpoint_step": 1800
+    }
+  ]
+}

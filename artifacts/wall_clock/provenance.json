@@ -1,0 +1,32 @@
+{
+  "experiment_id": "wall_clock.tfim.h100.sr_bagged_ms_sr.v1",
+  "hardware": {
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "host_cpu_reported": "dual Intel Xeon Platinum 8481C",
+    "physical_gpu_indices": {
+      "1": 2,
+      "2": 3,
+      "3": 4
+    }
+  },
+  "interpretation": "Steady-state update-construction timing, not end-to-end training throughput.",
+  "private_paths_retained": false,
+  "protocol": {
+    "apply_update": false,
+    "diagnostics": false,
+    "samples_per_batch": 12000,
+    "solver": "Hermitian eigendecomposition pseudoinverse, rtol=1e-12",
+    "synchronized": true,
+    "timed_repeats": 5,
+    "warmups": 2
+  },
+  "schema_version": 1,
+  "software": {
+    "jax": "0.7.2",
+    "netket": "3.21.0",
+    "python": "3.12.13",
+    "scipy": "1.18.0"
+  },
+  "trusted_source_revision": "f0f8803c35c188655d6e29f4896b620fa9cd6eca",
+  "trusted_source_worktree_was_dirty": true
+}

@@ -1,0 +1,18 @@
+{
+  "excluded_inputs": [
+    {
+      "pattern": "raw pickle payloads and NTK caches",
+      "reason": "unsafe/non-portable serialization and embedded absolute paths; all scalar claim data are exported as CSV"
+    },
+    {
+      "pattern": "j1j2_no_symmetry fixed-shift matrix at step 1000",
+      "reason": "only shift 1e-4 completed; the entire checkpoint is excluded so every fixed-shift comparison uses the same nine checkpoints"
+    }
+  ],
+  "negative_result_disclosure": {
+    "caveat": "lambda*=0.1 at the maximum diagnostic-grid boundary and selected on the reporting validation stream",
+    "experiment_id": "robustness.ssm_no_symmetry.method_ablation.v1",
+    "label": "boundary-grid evaluation-oracle bagged SR"
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,895 @@
+\section{Code and Data Availability}\label{app:code}
+The public repository containing the code, compact artifacts, and figure
+regeneration tools for this work is
+\url{https://github.com/takh04/sr_filter}.
+The experimental tools were developed on top of NetKet, an open-source
+neural-quantum-state and variational Monte Carlo library distributed under the
+Apache License 2.0 \citep{vicentini2022netket}.
+
+\section{Fixed-Checkpoint SR Regression Identities}\label{app:proofs}
+
+This appendix gives the derivations behind Section~\ref{sec:ridge}. All
+statements are checkpoint-local: the wavefunction \(\psi_\theta\), sampling
+distribution \(\pi\), QGT, and tangent features are held fixed while only the
+Monte Carlo batch used to estimate the SR direction varies. We write
+\(\Snorm{u}=u^T S u\). Since \(S\) may be singular, null QGT directions do not
+change tangent predictions and have zero \(S\)-seminorm. Throughout,
+\(^{\dagger}\) denotes the Moore--Penrose pseudoinverse; Hermitian adjoints are
+written explicitly as \(\overline{u}^{\,T}\).
+
+\subsection{Real and complex conventions}
+
+The main text assumes real wavefunctions and real tangent features in the
+sampling basis. Then
+\[
+    S=\Expect_\pi[O_c(x)O_c(x)^T],
+    \qquad
+    g=\Expect_\pi[O_c(x)H_{\mathrm{loc},c}(x)] .
+\]
+The fixed-checkpoint population problem is the ordinary least-squares problem
+\[
+    \min_\delta
+    \Expect_\pi\!\left[
+        \left(O_c(x)^T\delta-H_{\mathrm{loc},c}(x)\right)^2
+    \right],
+\]
+and its minimum-norm solution is \(\delta^*=S^\dagger g\).
+
+For complex wavefunctions, let
+\[
+    O_c(x)=\nabla_\theta\log\psi_\theta(x)
+    -\Expect_\pi[\nabla_\theta\log\psi_\theta],
+    \qquad
+    H_{\mathrm{loc},c}(x)=H_{\mathrm{loc}}(x)-\Expect_\pi H_{\mathrm{loc}} .
+\]
+The Hermitian QGT and force are
+\[
+    Q=\Expect_\pi[\overline{O_c(x)}\,O_c(x)^T],
+    \qquad
+    f=\Expect_\pi[\overline{O_c(x)}\,H_{\mathrm{loc},c}(x)] .
+\]
+For complex parameter increments \(\delta\in\mathbb C^p\), the regression loss is
+\(\Expect_\pi|O_c(x)^T\delta-H_{\mathrm{loc},c}(x)|^2\), the normal equations are
+\(Q\delta=f\), and the corresponding seminorm is
+\(\overline{\delta}^{\,T}Q\delta=\Expect_\pi|O_c(x)^T\delta|^2\). For real parameter
+increments in a complex wavefunction, minimizing the same modulus-squared loss
+over \(\delta\in\mathbb R^p\) gives $\operatorname{Re}[Q\,\delta]=\operatorname{Re}[f].$
+Equivalently, one stacks the real and imaginary residuals and solves an ordinary
+real least-squares problem. Thus the real-parameter SR equation uses
+\(S=\operatorname{Re}[Q]\) and \(g=\operatorname{Re}[f]\). The derivations below are
+written in the real convention. In the complex convention, replace scalar
+squares by modulus squares and replace the \(S\)-seminorm by the corresponding
+real or Hermitian QGT seminorm.
+
+\subsection{Validation and variance identities}
+
+Let \(\delta^*\) be the population least-squares SR direction and define
+\[
+    \epsilon(x)=H_{\mathrm{loc},c}(x)-O_c(x)^T\delta^* .
+\]
+The population normal equations give
+\(\Expect_\pi[O_c(x)\epsilon(x)]=0\). Hence, for any fixed direction
+\(\delta\),
+\[
+\begin{aligned}
+    \Expect_\pi\!\left[
+        \left(O_c(x)^T\delta-H_{\mathrm{loc},c}(x)\right)^2
+    \right]
+    &=
+    \Expect_\pi\!\left[
+        \left(O_c(x)^T(\delta-\delta^*)-\epsilon(x)\right)^2
+    \right] \\
+    &=
+    \Snorm{\delta-\delta^*}
+    +\sigma_{\mathrm{gap}}^2,
+\end{aligned}
+\]
+where \(\sigma_{\mathrm{gap}}^2=\Expect_\pi[\epsilon(x)^2]\). Thus an
+independent held-out residual estimates the \(S\)-excess risk up to the constant
+expressivity-gap term.
+
+For a random diagnostic update \(Z=\hat\delta_\lambda\) computed by resampling
+an SR batch at the same checkpoint, let \(\mu=\Expect_{\mathcal D}Z\). Adding and
+subtracting \(\mu\) gives
+\[
+\begin{aligned}
+    \mathcal E_\lambda
+    =
+    \Expect_{\mathcal D}\Snorm{Z-\delta^*}
+    &=
+    \Snorm{\mu-\delta^*}
+    +
+    \Expect_{\mathcal D}\Snorm{Z-\mu} .
+\end{aligned}
+\]
+The cross term vanishes because \(\Expect_{\mathcal D}[Z-\mu]=0\). This is the
+usual squared-bias plus variance decomposition, with distances measured in the
+checkpoint QGT seminorm.
+
+Finally, let \(Z_1,\ldots,Z_m\) be independent copies of \(Z\) and
+\(\bar Z=m^{-1}\sum_j Z_j\). The standard sample-variance identity holds in the
+same seminorm:
+\[
+    \Expect\left[
+        \frac1{m-1}\sum_{j=1}^m\Snorm{Z_j-\bar Z}
+    \right]
+    =
+    \Expect\Snorm{Z-\mu} .
+\]
+Equivalently,
+\[
+    \frac1{m-1}\sum_{j=1}^m\Snorm{Z_j-\bar Z}
+    =
+    \frac1{\binom m2}
+    \sum_{a<b}\frac12\Snorm{Z_a-Z_b} .
+\]
+Replacing each \(S\)-seminorm prediction norm by its empirical held-out average
+\( |\mathcal D_{\mathrm{val}}|^{-1}\sum_x (O_c(x)^T\cdot)^2\) gives the
+multi-batch diagnostic used in the main text.
+
+\subsection{Spectral filter proxy}
+
+On the non-null QGT subspace, write
+\(S=V\operatorname{diag}(s_i)V^T\) with \(s_i>0\), and let
+\(\beta_i^*=(V^T\delta^*)_i\). The population ridge direction is
+\[
+    \delta_\lambda=(S+\lambda I)^{-1}g
+    =(S+\lambda I)^{-1}S\delta^* .
+\]
+Therefore
+\[
+    \delta_\lambda-\delta^*
+    =
+    -\lambda(S+\lambda I)^{-1}\delta^* ,
+\]
+and the exact population shrinkage bias is
+\[
+    \Snorm{\delta_\lambda-\delta^*}
+    =
+    \sum_i
+    s_i
+    \left(\frac{\lambda}{s_i+\lambda}\right)^2
+    (\beta_i^*)^2 .
+\]
+
+The scalar variance term in \eqref{eq:spectral_risk} is a reference calculation,
+not an assumption needed by the diagnostics. To isolate the residual-noise
+contribution, write
+\[
+    \hat g=\hat S\delta^*+\hat\xi,
+    \qquad
+    \hat\xi
+    =
+    \frac1{N_s}\sum_{j=1}^{N_s}O_c(x_j)\epsilon(x_j),
+    \qquad
+    \Expect[\hat\xi]=0 .
+\]
+If one ignores the covariance-estimation fluctuation in \(\hat S\) and replaces
+the empirical inverse by \(A_\lambda=(S+\lambda I)^{-1}\), then
+\[
+    \hat\delta_\lambda-\delta_\lambda
+    \approx
+    A_\lambda\hat\xi .
+\]
+Let
+\(\Sigma_\epsilon=\Expect_\pi[O_c(x)O_c(x)^T\epsilon(x)^2]\). The force-noise
+proxy is then
+\[
+    \Expect_{\mathcal D}
+    \Snorm{\hat\delta_\lambda-\delta_\lambda}
+    \approx
+    \frac1{N_s}
+    \operatorname{tr}\!\left[
+        S A_\lambda \Sigma_\epsilon A_\lambda
+    \right] .
+\]
+Under the scalar, homoscedastic approximation
+\(\Sigma_\epsilon\approx\sigma_{\mathrm{gap}}^2 S\), this becomes
+\[
+\begin{aligned}
+    \Expect_{\mathcal D}
+    \Snorm{\hat\delta_\lambda-\delta_\lambda}
+    &\approx
+    \frac{\sigma_{\mathrm{gap}}^2}{N_s}
+    \operatorname{tr}\!\left[
+        A_\lambda S A_\lambda S
+    \right] =
+    \frac{\sigma_{\mathrm{gap}}^2}{N_s}
+    \sum_i
+    \left(\frac{s_i}{s_i+\lambda}\right)^2 .
+\end{aligned}
+\]
+
+\subsection{Local Fubini--Study metric}
+
+Let \(|\Psi(\theta)\rangle\) denote the normalized variational state and let
+\(P_\perp=I-|\Psi(\theta)\rangle\langle\Psi(\theta)|\). The real QGT is the
+pullback of the Fubini--Study metric,
+\[
+    S_{ij}
+    =
+    \operatorname{Re}
+    \left\langle
+        P_\perp\partial_i\Psi(\theta),
+        P_\perp\partial_j\Psi(\theta)
+    \right\rangle .
+\]
+In the real sampling-basis convention, this equals
+\(\Expect_\pi[O_{c,i}(x)O_{c,j}(x)]\). A Taylor expansion of the normalized state
+therefore gives, for nearby displacements \(a\) and \(b\),
+\[
+    1-
+    \left|
+        \langle \Psi(\theta+a)\mid\Psi(\theta+b)\rangle
+    \right|^2
+    =
+    (a-b)^T S(a-b)
+    +
+    O\!\left((\|a\|+\|b\|)^3\right).
+\]
+Taking \(a=-\eta\delta\) and \(b=-\eta\delta'\) gives
+\[
+    \mathcal I_\theta(\delta,\delta')
+    =
+    \eta^2
+    (\delta-\delta')^T S(\delta-\delta')
+    +
+    O(\eta^3)
+\]
+for bounded update directions. Hence the \(S\)-norm excess risk controls the
+expected local infidelity between the population SR update and the empirical SR
+update, up to the factor \(\eta^2\) and higher-order terms.
+
+
+\subsection{Sample centering}
+
+Practical SR uses sample-centered log-derivatives and sample-centered local
+energies. This is exactly the ridge-regression problem with an unpenalized
+intercept,
+\[
+    \min_{a,\delta}
+    \frac1n\sum_{j=1}^n
+    \left(
+        a+O(x_j)^T\delta-H_{\mathrm{loc}}(x_j)
+    \right)^2
+    +\lambda\|\delta\|_2^2 .
+\]
+For fixed \(\delta\), the optimal intercept is
+$
+    a=\bar H_{\mathrm{loc}}-\bar O^T\delta .
+$
+Substitution gives
+\[
+    \frac1n\sum_{j=1}^n
+    \left(
+        (O(x_j)-\bar O)^T\delta
+        -(H_{\mathrm{loc}}(x_j)-\bar H_{\mathrm{loc}})
+    \right)^2
+    +\lambda\|\delta\|_2^2 .
+\]
+Thus sample centering is simply the intercept form of the same regression.
+In population, the intercept removes only the constant energy/normalization
+component. It does not remove the expressivity gap, because
+\[
+    \epsilon(x)=H_{\mathrm{loc},c}(x)-O_c(x)^T\delta^*
+\]
+has \(\Expect_\pi[\epsilon(x)]=0\) and
+\(\Expect_\pi[O_c(x)\epsilon(x)]=0\). A finite-sample intercept also removes the
+sample mean of the residual, replacing \(\epsilon_j\) by
+\(\epsilon_j-\bar\epsilon\), but it cannot fit any \(x\)-dependent part of the
+gap. These centering terms are lower-order finite-sample fluctuations and do
+not change the checkpoint-local bias--variance identities.
+
+\section{Experimental Details: Small-Scale Experiments}\label{app:small}
+
+\paragraph{System.}
+The exact experiments in Figure~\ref{fig:smallscale_paradox} use the $4\times4$
+periodic $J_1$-$J_2$ Heisenberg model with $J_1=1.0$ and $J_2=0.5$, giving full
+Hilbert-space dimension $2^{16}=65{,}536$. Since all basis states are enumerable,
+we compute the Born distribution $\pi(x)=|\psi_\theta(x)|^2/\|\psi_\theta\|^2$,
+the population QGT $S$, the ideal update $\delta^*=S^\dagger g$, and the
+expressivity-gap variance $\sigma_{\mathrm{gap}}^2$ by exact summation.
+
+\paragraph{Models.}
+The underparameterized model is a complex-valued RBM with hidden-to-visible ratio
+$\alpha=2$, giving $P=1120$ real parameters and $P/N_s=0.273$ at the diagnostic
+sample size $N_s=4096$. The overparameterized model is a complex-valued ViT with
+depth $2$, embedding dimension $24$, $4$ attention heads, MLP expansion factor
+$4$, and $2\times2$ patches, giving $P=13{,}448$ real parameters and
+$P/N_s=3.283$. Parameter counts are real counts, obtained by unrolling each
+complex parameter into real and imaginary parts.
+
+\paragraph{Training and checkpoint diagnostics.}
+The model checkpoints used in the small-scale comparisons are produced by VMC
+with SR, $4096$ Metropolis-local samples per optimization step, learning rate
+$10^{-3}$, and training diagonal shift $10^{-3}$. Exact diagnostic summaries are
+saved every $10$ optimizer steps. For each diagnostic checkpoint we store
+$\sigma_{\mathrm{gap}}^2$, the target variance, the exact population update, and
+the full-Hilbert-space arrays needed to evaluate one-step SR generalization.
+
+\paragraph{Matched-noise protocol.}
+For the matched-noise comparison, the RBM and ViT are trained independently and
+checkpoint pairs are selected by matching the raw expressivity-gap variance
+$\sigma_{\mathrm{gap}}^2$. The pair used in Figure~\ref{fig:smallscale_paradox}
+is RBM step $490$ and ViT step $10$, with
+$\sigma_{\mathrm{gap}}^2=0.8088$ and $0.7957$ respectively. At these fixed
+checkpoints we draw $100$ independent training batches of size $N_s=4096$ from
+the exact Born distribution and solve SR at $\lambda=10^{-9}$.
+
+\paragraph{Matched-state protocol.}
+For the matched-state comparison, we first choose a partially converged RBM
+checkpoint and then fit a ViT to the same wavefunction by minimizing the exact
+Fubini--Study infidelity
+\begin{equation}
+    \mathcal{I}(\theta_{\mathrm{ViT}})
+    =
+    1 -
+    \frac{
+        \left|\sum_x \psi_{\mathrm{RBM}}^*(x)\psi_{\mathrm{ViT}}(x;\theta_{\mathrm{ViT}})\right|^2
+    }{
+        \left(\sum_x |\psi_{\mathrm{RBM}}(x)|^2\right)
+        \left(\sum_x |\psi_{\mathrm{ViT}}(x;\theta_{\mathrm{ViT}})|^2\right)
+    } .
+\end{equation}
+All sums run over the $2^{16}$ basis states, so the objective and diagnostics do
+not use stochastic overlap estimates. The pair used in
+Figure~\ref{fig:smallscale_paradox} has fidelity $F=0.983626$ between the two
+represented states. Its exact gap variances are
+$\sigma_{\mathrm{gap}}^2=1.9469$ for the RBM and $0.8161$ for the ViT. We use
+$10$ independent Born-resampled training batches of size $4096$ for this
+matched-state one-step SR diagnostic.
+
+\paragraph{One-step SR metrics.}
+For each resampled training batch \(\mathcal D_b\), the main-text excess-risk
+estimate uses the exact population geometry:
+\[
+    \widehat{\mathcal E}_\lambda
+    =
+    \frac1B
+    \sum_{b=1}^B
+    \Snorm{\hat\delta_\lambda(\mathcal D_b)-\delta^*}.
+\]
+Here $B=100$ for matched noise and $B=10$ for matched state. Figure~
+\ref{fig:smallscale_paradox} and the main-text values report one sample standard
+error, computed as the sample standard deviation of the $B$ trial risks
+divided by \(\sqrt{B}\).
+We also compute the training-batch regression residual and, as a consistency
+diagnostic, the corresponding full population local-energy residual obtained by
+adding the constant expressivity-gap variance \(\sigma_{\mathrm{gap}}^2\).
+
+
+\section{Experimental Details: Large-Scale Experiments}\label{app:large}
+
+This appendix gives the reproducibility details for the two large-scale systems
+used in Sections~\ref{sec:large_scale} and~\ref{sec:mssr}: the $L=100$ TFIM
+foundation NQS and the $8\times8$ $J_1$-$J_2$ ViT.
+
+\subsection{FNQS on TFIM}
+
+\paragraph{Hamiltonian.}
+The periodic one-dimensional transverse-field Ising model is
+\[
+    H(h)=-h\sum_{i=1}^{L}X_i-\sum_{i=1}^{L}Z_iZ_{i+1},
+    \qquad L=100,
+\]
+with transverse field $h\in[0.8,1.2]$. This interval straddles the critical
+point $h=1$.
+
+\paragraph{Foundation NQS objective.}
+Following \citet{rende2025foundation}, we train a conditional wavefunction
+$\log\psi_\theta(x;h)$ rather than a separate model for each field value. The
+field $h$ is supplied as a coupling token to the ViT. Training minimizes the
+field-averaged variational energy
+\begin{equation}\label{eq:fnqs_loss}
+    \mathcal{L}(\theta)
+    =
+    \Expect_{h\sim p(h)}
+    \left[
+        \frac{
+            \langle\psi_\theta(\cdot;h)|H(h)|\psi_\theta(\cdot;h)\rangle
+        }{
+            \langle\psi_\theta(\cdot;h)|\psi_\theta(\cdot;h)\rangle
+        }
+    \right],
+\end{equation}
+where $p(h)$ is uniform over $R=6000$ training fields in $[0.8,1.2]$.
+
+\paragraph{Model and optimizer.}
+The model is a real-valued ViTFNQS with $6$ layers, $d_{\mathrm{model}}=72$,
+$12$ attention heads, patch size $b=4$ (effective sequence length $25$), one
+coupling input (\texttt{n\_coups}=1), and translational invariance. It has
+$P=198{,}144$ trainable parameters. Each SR step uses $N_s=12{,}000$ samples,
+organized as $6000$ field replicas with two spin configurations per field. Spin
+configurations are drawn with a local Metropolis rule and sweep size $L$. The
+optimizer is SGD with fixed learning rate $\eta=0.005$ and minSR/NTK
+preconditioning using the \texttt{pinv} linear solver.
+
+\paragraph{Training and checkpoints.}
+The source run used for the shared-checkpoint diagnostic protocol is trained
+with $\lambda_{\mathrm{train}}=10^{-4}$ for $2000$ steps. Checkpoints are saved
+every $100$ steps. The ten diagnostic checkpoints are
+$\{1100,1200,\ldots,2000\}$.
+
+\paragraph{Held-out field bank.}
+Validation uses a fixed held-out bank of $6000$ transverse fields drawn
+uniformly from $[0.8,1.2]$ with seed $0$, disjoint from the training fields.
+Each validation pass uses $20$ spin configurations per held-out field, giving
+$|\mathcal D_{\mathrm{val}}|=120{,}000$.
+
+\subsection[J1-J2 ViT with symmetry ramp]{$J_1$-$J_2$ ViT with symmetry ramp}
+
+\paragraph{Hamiltonian.}
+The two-dimensional system is the $8\times8$ periodic $J_1$-$J_2$ Heisenberg
+model
+\[
+    H
+    =
+    J_1\sum_{\langle i,j\rangle}\mathbf S_i\cdot\mathbf S_j
+    +
+    J_2\sum_{\langle\!\langle i,j\rangle\!\rangle}
+    \mathbf S_i\cdot\mathbf S_j,
+    \qquad
+    J_1=1,\quad J_2=0.5 .
+\]
+No Marshall sign rule is imposed.
+
+\paragraph{Model and optimizer.}
+The ansatz is the ViT architecture of \citet{rende2024simple}, with depth $6$,
+$d_{\mathrm{model}}=48$, $8$ attention heads, MLP expansion factor $4$, and
+$2\times2$ patches. The real parameter count is $P=147{,}216$. SR uses the
+minSR formulation with Cholesky solves, peak learning rate $\eta=0.01$, a
+$100$-step linear warmup, and a cosine decay schedule.
+
+\paragraph{Symmetry ramp.}
+Training uses three phases with increasing symmetry:
+\begin{itemize}
+    \item identity symmetry for $200$ steps with $N_s=8192$,
+    \item translations for $3500$ steps with $N_s=8192$,
+    \item translations plus $C_4$ rotations for $3500$ steps with $N_s=6000$.
+\end{itemize}
+The total training length is $7200$ steps. The checkpoint source used for the
+MS-SR ablations is the $\lambda_{\mathrm{train}}=10^{-4}$ run. The ten
+diagnostic checkpoints are steps
+$\{900,1600,2300,3000,3700,4400,5100,5800,6500,7200\}$.
+
+\subsection{Checkpoint-Local Diagnostic Protocol}
+
+\paragraph{Solve-time shift sweep.}
+The large-scale diagnostics hold the source checkpoint fixed and vary only the
+solve-time shift. For the TFIM U-curve in Figure~\ref{fig:large_scale_ucurve},
+the diagnostic grid is
+\[
+    \lambda\in\{10^{-8},10^{-7},10^{-6},10^{-5},10^{-4},10^{-3},10^{-2},10^{-1}\}.
+\]
+Each value recomputes SR updates from fresh training batches at the same stored
+parameters.
+
+\paragraph{Delta banks.}
+For each checkpoint and solve-time shift, we build a bank of independent SR
+updates by repeatedly restoring the checkpoint state, drawing a fresh training
+batch, computing the SR update, and discarding the parameter update. This makes
+the stored directions independent draws from the checkpoint-local law of
+$\hat\delta_\lambda$. The single-shift diagnostic banks use $m=20$ deltas.
+
+\paragraph{Validation pass.}
+The validation diagnostics are computed by a streamed pass over a fixed
+validation block. Local energies and log-derivative Jacobian-vector products are
+computed once per validation sample and reused for all stored deltas. The
+$J_1$-$J_2$ validation block has $100{,}000$ samples. The TFIM validation block
+has $120{,}000$ samples, organized as $6000$ held-out fields times $20$ spin
+configurations per field.
+
+\paragraph{Centering and metrics.}
+For $J_1$-$J_2$, local energies and predictions are centered globally over the
+validation block. For TFIM, they are centered separately within each held-out
+field, matching the replica structure of the training objective. The validation
+residual $\widehat{\mathcal E}_{\mathrm{val}}$ is the mean squared held-out
+regression residual for the stored updates. The multi-batch variance
+$\mathcal V_{\mathrm{mb}}$ is the centered prediction-space disagreement of the
+stored updates around their bank mean; it is computed from
+$O_c(x)^T\hat\delta_j$ rather than from raw parameter differences, so flat
+parameter directions do not contribute.
+
+\section{Offline Diagnostics and MS-SR Protocols}\label{app:mssr}
+
+\begin{algorithm}[t]
+\caption{Multi-Shift SR (MS-SR): one optimization step}
+\label{alg:mssr_appendix}
+\begin{algorithmic}[1]
+\Require parameters \(\theta_t\); number of shifts \(K\); batch size \(N_s\);
+NTK-spectrum quantiles \(\{q_j\}_{j=1}^K\).
+\State Draw independent batches
+\(\mathcal D_1,\dots,\mathcal D_K\sim\pi_{\theta_t}\), each of size \(N_s\).
+On each batch compute centered features \(O_{c,j}\) and centered local energies
+\(H_{\mathrm{loc},c,j}\).
+\State Estimate one empirical NTK spectrum
+\(\{s_i\}_{i=1}^{N_s}=\operatorname{spec}(O_{c,1}O_{c,1}^T)\), and set
+\[
+    \lambda_j
+    \leftarrow
+    \operatorname{Quantile}(\{s_i\}_{i=1}^{N_s},q_j),
+    \qquad j=1,\dots,K .
+\]
+\State In parallel, compute
+\(\hat\delta_j\leftarrow\minSR(\mathcal D_j,\lambda_j)\) for
+\(j=1,\dots,K\).
+\State Fit convex leave-one-batch-out stacking weights
+\[
+    \mathbf w
+    \leftarrow
+    \argmin_{\mathbf v\in\Delta^{K-1}}
+    \sum_{j=1}^K
+    \left\|
+        \sum_{i\ne j}\frac{v_i}{1-v_j}O_{c,j}\hat\delta_i
+        -
+        H_{\mathrm{loc},c,j}
+    \right\|^2 .
+\]
+\State Apply the mixture update:
+\[
+    \theta_{t+1}
+    \leftarrow
+    \theta_t-\eta\sum_{j=1}^K w_j\hat\delta_j .
+\]
+\State \Return \(\theta_{t+1},\boldsymbol{\lambda},\mathbf w\).
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{MS-SR shifts.}
+All MS-SR ablations in Figure~\ref{fig:mssr_diagnostics} use $K=4$. The four
+shifts are chosen from the empirical NTK spectrum at quantiles
+\(\{0.9,0.7,0.4,0.1\}\). The quantiles are computed from one fitting batch at
+the current checkpoint, then reused for the candidate solves in that MS-SR step.
+This gives a checkpoint-adaptive grid without fitting the shifts on the final
+validation data.
+
+\paragraph{Shared-batch and independent-batch constructions.}
+The shared-batch variants solve all four shifts on one shared fitting batch. This
+preserves the exact finite-sample interpretation as a convex mixture of ridge
+filters on a single empirical QGT. The independent-batch variants solve one
+shift per independent fitting batch. They no longer correspond to a single
+empirical spectral filter, but their sampling errors are decorrelated, giving
+the variance-reduction mechanism analyzed in Section~\ref{sec:mssr}.
+
+\paragraph{Stacking weights.}
+For MS-SR, weights are selected by leave-one-batch-out stacking. Candidate
+update \(\hat\delta_i\) is evaluated on batches that did not produce it, and the
+weights are constrained to the simplex. The shared-batch stacked ablation uses the
+same candidate deltas as the shared-batch uniform method, but fits the simplex
+weights on an independent weight-fit batch. Uniform variants set
+\(w_i=1/K\).
+
+\paragraph{Ablations.}
+Figure~\ref{fig:mssr_diagnostics} compares the following six checkpoint-local
+updates:
+\begin{itemize}
+    \item \textbf{Evaluation-oracle single SR:} one SR solve at the
+    per-checkpoint validation minimizer $\lambda^*$ over
+    $\{10^{-8},\ldots,10^{-1}\}$.
+    \item \textbf{Shared-batch multi-shift, uniform:} four NTK-quantile shifts on
+    one batch, averaged uniformly.
+    \item \textbf{Shared-batch multi-shift, stacked:} the same four shared-batch
+    candidates with simplex weights fit on an independent weight-fit batch.
+    \item \textbf{Evaluation-oracle bagged SR:} four independent SR solves at
+    the same per-checkpoint $\lambda^*$, averaged uniformly.
+    \item \textbf{Independent-batch multi-shift, uniform:} four independent
+    batches, one NTK-quantile shift per batch, averaged uniformly.
+    \item \textbf{MS-SR:} four independent batches, NTK-quantile shifts, and
+    leave-one-batch-out stacking weights.
+\end{itemize}
+The ablation separates the effect of richer spectral filters from the effect of
+independent-batch averaging. Bars in the main figure are computed from the same
+fixed source checkpoints for each method; error bars are standard errors over
+checkpoint-level diagnostic means. Figure~\ref{fig:mssr_diagnostics} is
+regenerated directly from
+\path{artifacts/robustness/method_ablation_checkpoints.csv}; for each method,
+the script computes the checkpoint mean and the population standard deviation
+across the ten checkpoints divided by $\sqrt{10}$.
+
+The earlier submission text incorrectly described both oracle baselines as
+using the training shift $10^{-4}$. This correction makes the baselines
+stronger: they use data held out from update fitting and an eight-point sweep
+at every checkpoint, whereas MS-SR does not tune its shifts on validation.
+The same validation stream both selects and reports the oracle shift, so these
+rows deliberately contain selection leakage and are diagnostic baselines.
+
+\subsection{Baseline Tuning and Robustness}\label{app:mssr_robustness}
+
+The compact inputs for this subsection are released as
+\path{artifacts/robustness/shift_sweep_summary.csv},
+\path{artifacts/robustness/method_ablation_summary.csv}, and
+\path{artifacts/robustness/bagged_fixed_shift_summary.csv}; checkpoint- and
+repeat-level companion files, provenance, and checksums are in the same
+\path{artifacts/robustness/} directory.
+
+\paragraph{Fixed versus oracle shifts.}
+Table~\ref{tab:tfim_shift_robustness} separates the effect of independent-batch
+averaging from shift selection on the ten TFIM checkpoints. The oracle rows
+select $\lambda^*$ independently at every checkpoint from the validation
+residual and report risk on that same stream; this information is unavailable
+to an online optimizer and introduces intentional selection leakage.
+At the training shift, MS-SR improves validation risk on all ten paired
+checkpoints. At the oracle shift, bagged SR is better on TFIM. Its lower
+$\mathcal V_{\mathrm{mb}}$ at $10^{-4}$ does not imply lower total risk:
+the stronger shrinkage reduces variance while increasing bias.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+Method & $\widehat{\mathcal E}_{\mathrm{val}}$ & $\mathcal V_{\mathrm{mb}}$ \\
+\midrule
+Evaluation-oracle single SR
+  & $0.00970\mathbin{\pm}0.00077$ & $0.00471\mathbin{\pm}0.00039$ \\
+Bagged SR at $\lambda_{\mathrm{train}}=10^{-4}$
+  & $0.00933\mathbin{\pm}0.00065$ & $0.000613\mathbin{\pm}0.000040$ \\
+Evaluation-oracle bagged SR
+  & $0.00617\mathbin{\pm}0.00047$ & $0.001171\mathbin{\pm}0.000096$ \\
+MS-SR
+  & $0.00680\mathbin{\pm}0.00050$ & $0.001389\mathbin{\pm}0.000092$ \\
+\bottomrule
+\end{tabular}
+\caption{TFIM shift comparison. Entries are means $\mathbin{\pm}$ one
+standard error across ten checkpoints. The oracle rows use the same
+fitting-held-out validation sweep for selection and reporting at each
+checkpoint; MS-SR uses the fixed NTK-quantile rule.}
+\label{tab:tfim_shift_robustness}
+\end{table}
+
+\paragraph{Number of candidates and quantile grid.}
+Table~\ref{tab:mssr_k_quantile_robustness} varies $K$ and the empirical-spectrum
+quantiles. The paper's $K=4$ and default grid were fixed before this study.
+Increasing $K$ smoothly lowers both diagnostics on TFIM. The two alternative
+$K=4$ grids change validation risk by at most $3.4\%$ relative to the default.
+Oracle bagging remains lower on this single-shift-sufficient system for every
+$K$ tested, which is why these results should not be read as a universal MS-SR
+advantage.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Setting & MS-SR $\widehat{\mathcal E}_{\mathrm{val}}$
+  & MS-SR $\mathcal V_{\mathrm{mb}}$
+  & Oracle-bagged $\widehat{\mathcal E}_{\mathrm{val}}$ \\
+\midrule
+$K=2$ & $0.008538\pm0.000617$ & $0.002277\pm0.000175$ & $0.007332\pm0.000568$ \\
+$K=3$ & $0.007157\pm0.000524$ & $0.001738\pm0.000109$ & $0.006556\pm0.000502$ \\
+$K=4$ & $0.006802\pm0.000504$ & $0.001389\pm0.000092$ & $0.006166\pm0.000470$ \\
+$K=5$ & $0.006383\pm0.000468$ & $0.001266\pm0.000087$ & $0.005934\pm0.000452$ \\
+\midrule
+$K=4$, $(.95,.8,.5,.2)$ & $0.006938\pm0.000514$ & $0.001469\pm0.000089$ & --- \\
+$K=4$, $(.8,.6,.3,.05)$ & $0.006574\pm0.000496$ & $0.001369\pm0.000102$ & --- \\
+\bottomrule
+\end{tabular}
+\caption{Robustness to $K$ and the quantile grid on ten TFIM checkpoints.
+Entries are means $\mathbin{\pm}$ one standard error across checkpoints. The
+default $K=4$ grid is $(.9,.7,.4,.1)$. Oracle bagging uses the
+validation-selected $\lambda^*$ for each checkpoint.}
+\label{tab:mssr_k_quantile_robustness}
+\end{table}
+
+\paragraph{Source training shift.}
+We also repeat the $K=4$ checkpoint protocol on source trajectories trained at
+$\lambda_{\mathrm{train}}=10^{-3}$ and $10^{-5}$
+(Table~\ref{tab:mssr_source_shift_robustness}). These small three-checkpoint
+tests give near-parity between MS-SR and oracle bagging and therefore support
+robustness, not superiority.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+$\lambda_{\mathrm{train}}$ & Checkpoints
+  & MS-SR $\widehat{\mathcal E}_{\mathrm{val}}$
+  & Oracle-bagged $\widehat{\mathcal E}_{\mathrm{val}}$ \\
+\midrule
+$10^{-3}$ & 3 & $0.02473$ & $0.02459$ \\
+$10^{-5}$ & 3 & $0.001575$ & $0.001580$ \\
+\bottomrule
+\end{tabular}
+\caption{Source-shift robustness. Because this follow-up contains only three
+checkpoints per source shift, we report descriptive means without uncertainty
+bars to avoid overinterpreting the small checkpoint sample.}
+\label{tab:mssr_source_shift_robustness}
+\end{table}
+
+\paragraph{Correlated samples and a deployment rule.}
+Within-batch Markov-chain autocorrelation replaces $N_s$ in the scalar proxy by
+an effective sample size and is already present in the empirical diagnostics.
+The exact factor-$K$ reduction in Section~\ref{par:multi_batch}, however,
+requires candidate errors to be independent; we therefore use separately
+seeded chains for the $K$ batches. A practical rule is to spend the $K$-batch
+budget only when $\mathcal V_{\mathrm{mb}}$ is a material share of the
+reducible validation risk and the validation-optimal shift varies across nearby
+checkpoints. Stable $\lambda^*$ and a shallow U-curve favor single-shift
+bagging.
+
+\subsection{Equal-Budget Online Protocol}\label{app:mssr_online}
+
+Figure~\ref{fig:mssr_equal_budget_online} uses two independently seeded late
+branches of the $8\times8$ periodic $J_1$-$J_2$ model at $J_2/J_1=0.5$.
+Each branch starts from one common SR checkpoint and then runs SR, SPRING, and
+MS-SR from identical parameters. Stable, machine-readable branch metadata and
+the exact endpoint-evaluation counts are summarized below. The corresponding
+files are released under \path{artifacts/online_training/branch_seed0/} and
+\path{artifacts/online_training/branch_seed1/}.
+
+\input{generated/online_protocol_table}
+
+The no-symmetry ViT has depth $8$, embedding dimension $72$, $12$ attention
+heads, MLP expansion factor $4$, and $2\times2$ patches. Every candidate batch
+contains $8192$ samples. Training uses a constant learning rate $0.01$ and a
+Cholesky minSR solver. SR and SPRING use shift $10^{-4}$; SPRING uses momentum
+$0.9$. The online MS-SR variant uses $K=4$ independent batches, exact
+leave-one-batch-out stacking, and the fixed shift grid
+$\{10^{-2},10^{-3},10^{-4},10^{-5}\}$. This fixed grid differs from the
+NTK-quantile construction used in the checkpoint-local ablations and is stated
+separately to avoid conflating the two protocols.
+
+One SR or SPRING update is one budget unit, while one $K=4$ MS-SR update is
+four units. Each continuation receives $500$ units, hence SR and SPRING take
+$500$ updates and MS-SR takes $125$. The plotted faint curves are raw
+stochastic training-energy estimates; solid curves use a common 25-budget-unit
+rolling mean after interpolation to a one-unit budget grid. Endpoint markers use fresh,
+independently seeded replicas and report one standard error. Each replica resets
+once, advances a single Markov stream through five discarded rounds, and then
+retains 512 consecutive rounds of 8192 samples; it is not reseeded between
+rounds. Repeated endpoint evaluations are pooled only after passing the
+artifact audit, including a predeclared check that the replica means differ by
+no more than five combined standard errors. Because the two
+panels are individual branched trajectories rather than replicated estimates
+of a population effect, we do not attach across-seed error bars to their
+training curves.
+
+\subsection{Wall-Clock Benchmark}\label{app:mssr_cost}
+
+The direct timing benchmark uses the TFIM $L=100$ step-2000 checkpoint with
+$N_s=12{,}000$ samples per candidate batch on one NVIDIA H100 80GB HBM3 GPU,
+hosted by two Intel Xeon Platinum 8481C CPUs. All methods use the same Hermitian
+eigendecomposition pseudoinverse. Within each of three device/seed pairs, each
+method has two warm-ups followed by five device-synchronized repetitions.
+Sampler fingerprints verify that SR's batch equals the first candidate batch
+of both $K=4$ methods and that all four candidate batches agree between bagged
+SR and MS-SR. The common parameter write and optional residual diagnostics are
+excluded.
+The long-form timings, aggregate table, and paired differences are released as
+\path{artifacts/wall_clock/timings_long.csv},
+\path{artifacts/wall_clock/timing_summary.csv}, and
+\path{artifacts/wall_clock/paired_cluster_summary.csv}. Pairing checks are in
+\path{artifacts/wall_clock/pairing_verification.csv}; the nine sanitized
+per-run records, provenance, and checksums are in the same
+\path{artifacts/wall_clock/} directory.
+
+\paragraph{Memory measurement.}
+The raw records also retain JAX allocator high-water marks. They were
+$57.986$ GB for SR and $58.124$ GB for both bagged SR and MS-SR
+($54.004$ and $54.132$ GiB, respectively). These counters cover the full
+process and JIT-compilation lifetime rather than an isolated steady-state
+update, so we report them only as a feasibility check on the 80 GB device and
+do not interpret the $0.138$ GB difference as a method-specific peak-memory
+estimate. A defensible comparison of incremental step memory would require a
+fresh process per method and allocator reset or timeline profiling; that
+comparison is recorded as excluded in
+\path{artifacts/wall_clock/exclusions.json}.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Method & Batches & Solves & Median time (three-pair range) & Relative to SR \\
+\midrule
+SR & 1 & 1 & $13.3836$ s ($13.1536$--$13.4493$) & $1.0000\times$ \\
+Bagged SR ($K=4$) & 4 & 4 & $53.5488$ s ($52.7056$--$53.5987$) & $3.9991\times$ \\
+MS-SR ($K=4$) & 4 & 4 & $54.0858$ s ($53.1442$--$54.1786$) & $4.0389\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Single-GPU steady-state wall time. We first take the median over five
+repetitions within each paired device/seed run, then report the median and range
+over three pairs; these are not standard errors.}
+\label{tab:mssr_wallclock}
+\end{table}
+
+The paired MS-SR increment over bagged SR is $0.5503$ s ($1.027\%$), with
+three-pair ranges $0.4373$--$0.5790$ s and $0.829$--$1.080\%$. The dominant
+cost of both methods is therefore the same four batches and four solves. MS-SR
+reuses the first eigendecomposition for its spectrum and first shifted solve,
+reuses candidate batches and local energies for stacking, evaluates its twelve
+off-batch directions in four batched Jacobian--vector products, and adds about
+$1\%$ measured method-specific overhead beyond bagging. This does not remove
+the approximately fourfold total cost relative to single SR.
+
+\subsection{Shastry--Sutherland Negative Result}\label{app:ssm_negative}
+
+We also ran the fixed-checkpoint protocol on a no-symmetry $8\times8$
+Shastry--Sutherland model at $J'/J=0.8$. This is a negative result for the
+shipped MS-SR rule. The boundary-grid evaluation-oracle bagged SR baseline
+selects $\lambda^*=10^{-1}$---the largest tested value---on the same validation
+stream used to report risk, at all ten checkpoints. It obtains raw validation
+risk $32.8\mathbin{\pm}3.1$, whereas MS-SR obtains
+$158.6\mathbin{\pm}38.3$ (mean $\mathbin{\pm}$ one standard error across
+checkpoints). Thus the boundary-grid evaluation-oracle bagged SR baseline is
+about five times better within this diagnostic comparison.
+
+This system is an extreme single-shift-sufficient regime and the candidate
+multi-shift family is misspecified at the grid boundary. It supports the
+deployment rule above: when $\lambda^*$ is stable and at an edge, the extra
+$K$-batch mixture is not justified. Because the optimum lies on the search
+boundary, the values do not establish the unconstrained best shift; they only
+show that the tested MS-SR construction fails against the tested oracle family.
+The compact checkpoint summary is released at
+\path{artifacts/robustness/ssm_boundary_oracle_summary.csv}.
+
+\section{Compute Resources}\label{app:compute}
+
+
+\begin{table}[h]
+\centering
+\scriptsize
+\begin{tabular}{p{0.22\linewidth}p{0.23\linewidth}p{0.20\linewidth}p{0.22\linewidth}}
+\toprule
+Experiment & Manuscript use & Worker & Recorded accounting \\
+\midrule
+Exact $4\times4$ studies, including discarded exploratory runs &
+ Figure~\ref{fig:smallscale_paradox} &
+\(1\times\) H100 80GB GPU &
+\(\approx30\) h / \(30\) GPU-h \\
+\midrule
+TFIM-FNQS training &
+Figure~\ref{fig:large_scale_ucurve} and \ref{fig:mssr_diagnostics} checkpoints &
+\(8\times\) H100 80GB GPUs &
+\(\approx1.9\) h / \(15\) GPU-h \\
+\midrule
+TFIM single-shift sweep &
+Figure~\ref{fig:large_scale_ucurve} &
+\(8\times\) H100 80GB GPUs &
+\(\approx25.5\) h / \(204\) GPU-h \\
+\midrule
+\(J_1\)--\(J_2\) ViT training  &
+Figure~\ref{fig:mssr_diagnostics} checkpoints&
+\(8\times\) H100 80GB GPUs &
+\(\approx15.1\) h / \(121\) GPU-h \\
+\midrule
+\(J_1\)--\(J_2\) MS-SR ablations &
+Figure~\ref{fig:mssr_diagnostics} &
+\(8\times\) H100 80GB GPUs &
+\(\approx46\) h / \(368\) GPU-h \\
+\midrule
+TFIM MS-SR ablations &
+Figure~\ref{fig:mssr_diagnostics} &
+\(8\times\) H100 80GB GPUs &
+\(\approx3.0\) h / \(24\) GPU-h \\
+\midrule
+TFIM robustness follow-ups &
+Tables~\ref{tab:tfim_shift_robustness}--\ref{tab:mssr_source_shift_robustness} &
+Single H100 80GB jobs &
+10 checkpoints/configuration (3 for source-shift rows); end-to-end time not retained \\
+\midrule
+Online branches and endpoint evaluations &
+Figure~\ref{fig:mssr_equal_budget_online} &
+$4\times$ H100 80GB GPUs per arm &
+Per branch: 500 SR, 500 SPRING, 125 MS-SR updates; endpoint sample counts in Table~\ref{tab:online_protocol} \\
+\midrule
+Optimized wall-clock benchmark &
+Table~\ref{tab:mssr_wallclock} &
+$1\times$ H100 80GB GPU &
+3 pairs $\times$ 3 methods $\times$ (2 warm-ups + 5 timed repeats); $<1$ GPU-h \\
+\midrule
+Shastry--Sutherland diagnostic &
+Appendix~\ref{app:ssm_negative} &
+Single H100 80GB jobs &
+10 checkpoints, 20 resampled updates/checkpoint; end-to-end time not retained \\
+\bottomrule
+\end{tabular}
+\caption{Compute-resource accounting. The first six entries sum to
+approximately $762$ H100 GPU-hours. This total excludes response-period
+follow-ups whose original launch logs did not retain complete end-to-end
+times; for those rows we report the exact worker and workload instead of
+inventing GPU-hour totals. The $4\times4$ row explicitly includes exploratory
+experiments removed from the final manuscript.}
+\label{tab:compute_resources}
+\end{table}

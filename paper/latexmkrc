@@ -1,0 +1,9 @@
+$ENV{'SOURCE_DATE_EPOCH'} //= '1767225600';
+$ENV{'FORCE_SOURCE_DATE'} //= '1';
+$ENV{'TZ'} = 'UTC';
+
+$pdf_mode = 1;
+$bibtex_use = 2;
+$max_repeat = 6;
+$pdflatex = 'pdflatex -file-line-error -interaction=nonstopmode -synctex=1 %O %S';
+@default_files = ('main.tex');

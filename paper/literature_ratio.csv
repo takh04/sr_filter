@@ -1,0 +1,20 @@
+source,publication_year,plot_year,group,domain,parameters,samples,ratio,evidence,citation_key,source_url
+Saito,2017,2017.35,Saito,spin,282,1000,0.282,explicit,saito2017bosehubbard,https://doi.org/10.7566/JPSJ.86.093001
+Saito and Kato CNN,2018,2017.94,Saito,spin,280,1000,0.28,explicit,saitokato2018machine,https://arxiv.org/abs/1709.05468
+Saito and Kato FCNN,2018,2018.04,Saito,spin,680,1000,0.68,explicit,saitokato2018machine,https://arxiv.org/abs/1709.05468
+Choo et al.,2020,2019.82,Choo,electronic,860,100000,0.0086,derived,choo2020fermionic,https://doi.org/10.1038/s41467-020-15724-9
+Zen et al.,2020,2020.00,Zen,spin,8384,10000,0.8384,derived,zen2020critical,https://arxiv.org/abs/2002.02618
+Hibat-Allah et al. 1D pRNN,2020,2020.07,Hibat-Allah,spin,8000,200,40,estimate,hibatallah2020rnn,https://doi.org/10.1103/PhysRevResearch.2.023358
+Hibat-Allah et al. 2D pRNN,2020,2020.14,Hibat-Allah,spin,21000,500,42,estimate,hibatallah2020rnn,https://doi.org/10.1103/PhysRevResearch.2.023358
+Hibat-Allah et al. 1D baseline,2020,2020.21,Hibat-Allah,spin,152000,500,304,estimate,hibatallah2020rnn,https://doi.org/10.1103/PhysRevResearch.2.023358
+Pfau et al.,2020,2020.34,Pfau,electronic,700000,4096,170.8984375,estimate,pfau2020ferminet,https://doi.org/10.1103/PhysRevResearch.2.033429
+Gutierrez and Mendl,2022,2022.00,Gutierrez,spin,1700,50000,0.034,explicit,gutierrez2022real,https://doi.org/10.22331/q-2022-01-20-627
+von Glehn et al.,2023,2023.00,von Glehn,electronic,1635458,4096,399.28173828125,explicit,vonglehn2023psiformer,https://openreview.net/forum?id=xveTeHVlF7j
+Rende et al. h10 d40,2024,2023.85,Rende,spin,85400,6000,14.2333333333333,explicit,rende2024simple,https://doi.org/10.1038/s42005-024-01732-4
+Rende et al. h10 d60,2024,2023.90,Rende,spin,187100,6000,31.1833333333333,explicit,rende2024simple,https://doi.org/10.1038/s42005-024-01732-4
+Rende et al. h12 d72,2024,2023.95,Rende,spin,267720,6000,44.62,explicit,rende2024simple,https://doi.org/10.1038/s42005-024-01732-4
+Rende et al. h14 d140,2024,2024.00,Rende,spin,994700,6000,165.783333333333,explicit,rende2024simple,https://doi.org/10.1038/s42005-024-01732-4
+Chen and Heyl,2024,2024.10,Chen,spin,1000000,10000,100,estimate,chen2024empowering,https://doi.org/10.1038/s41567-024-02566-1
+Sprague and Czischek RNN,2024,2024.18,Sprague,spin,67074,512,131.00390625,explicit,sprague2024variational,https://doi.org/10.1038/s42005-024-01584-y
+Sprague and Czischek Transformer,2024,2024.24,Sprague,spin,1203074,512,2349.75390625,explicit,sprague2024variational,https://doi.org/10.1038/s42005-024-01584-y
+Sprague and Czischek LPTF,2024,2024.30,Sprague,spin,1264400,512,2469.53125,derived,sprague2024variational,https://doi.org/10.1038/s42005-024-01584-y

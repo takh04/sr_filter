@@ -1,0 +1,107 @@
+schema = "sr_filter.fixed_data_protocol.v1"
+experiment_id = "robustness.checkpoint_local.v1"
+artifact_status = "complete"
+repeat_count = 20
+diagnostic_shifts = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
+default_quantiles = [0.9, 0.7, 0.4, 0.1]
+train_seed_rule = "10000 + checkpoint_step"
+validation_seed_rule = "20000 + checkpoint_step"
+spectrum_seed_rule = "30000 + checkpoint_step"
+selection_warning = "Grid-best lambda is selected on the same validation stream used for reporting; it is not a held-out oracle."
+command_note = "TOML is a frozen protocol record. Commands use the installed CLI directly; it does not load this file. Set every referenced input/output environment variable to an absolute path. Figure 3 and bagged runs pass their Figure 2 producer output explicitly with --diagnostic-dir and write to their own --output-dir."
+
+[[runs]]
+id = "tfim_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure2 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "j1j2_symmetry_enabled_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_symmetry_enabled_shift_sweep" --protocol figure2 --input-dir "${SR_FILTER_J1J2_SYMMETRY_INPUT:?set SR_FILTER_J1J2_SYMMETRY_INPUT}" --system j1j2 --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --conn-chunk 4096 --eval-chunk 4096 --delta-batch-size 10'''
+
+[[runs]]
+id = "j1j2_no_symmetry_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_no_symmetry_shift_sweep" --model-chunk-size-bwd 512 --protocol figure2 --input-dir "${SR_FILTER_J1J2_NOSYMM_INPUT:?set SR_FILTER_J1J2_NOSYMM_INPUT}" --system j1j2 --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --conn-chunk 4096 --eval-chunk 4096 --delta-batch-size 10'''
+
+[[runs]]
+id = "ssm_no_symmetry_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/ssm_no_symmetry_shift_sweep" --model-chunk-size-bwd 512 --protocol figure2 --input-dir "${SR_FILTER_SSM_NOSYMM_INPUT:?set SR_FILTER_SSM_NOSYMM_INPUT}" --system ssm --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --conn-chunk 4096 --eval-chunk 4096 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_early_extension_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_early_extension_shift_sweep" --protocol figure2 --input-dir "${SR_FILTER_TFIM_EARLY_INPUT:?set SR_FILTER_TFIM_EARLY_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_source_shift_1e-3_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_source_shift_1e-3_shift_sweep" --protocol figure2 --input-dir "${SR_FILTER_TFIM_SHIFT1E3_INPUT:?set SR_FILTER_TFIM_SHIFT1E3_INPUT}" --system tfim --source-train-lambda 1e-3 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_source_shift_1e-5_shift_sweep"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_source_shift_1e-5_shift_sweep" --protocol figure2 --input-dir "${SR_FILTER_TFIM_SHIFT1E5_INPUT:?set SR_FILTER_TFIM_SHIFT1E5_INPUT}" --system tfim --source-train-lambda 1e-5 --source-steps all --repeat-count 20 --batch-slots 4 --diag-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_source_shift_1e-3"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_source_shift_1e-3" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_source_shift_1e-3_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_SHIFT1E3_INPUT:?set SR_FILTER_TFIM_SHIFT1E3_INPUT}" --system tfim --source-train-lambda 1e-3 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_source_shift_1e-5"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_source_shift_1e-5" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_source_shift_1e-5_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_SHIFT1E5_INPUT:?set SR_FILTER_TFIM_SHIFT1E5_INPUT}" --system tfim --source-train-lambda 1e-5 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_early_extension"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_early_extension" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_early_extension_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_EARLY_INPUT:?set SR_FILTER_TFIM_EARLY_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "j1j2_symmetry_enabled_k4"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_symmetry_enabled_k4" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_symmetry_enabled_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_J1J2_SYMMETRY_INPUT:?set SR_FILTER_J1J2_SYMMETRY_INPUT}" --system j1j2 --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --delta-batch-size 10'''
+
+[[runs]]
+id = "j1j2_no_symmetry_k4"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_no_symmetry_k4" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_no_symmetry_shift_sweep" --model-chunk-size-bwd 512 --protocol figure3 --input-dir "${SR_FILTER_J1J2_NOSYMM_INPUT:?set SR_FILTER_J1J2_NOSYMM_INPUT}" --system j1j2 --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --delta-batch-size 10'''
+
+[[runs]]
+id = "ssm_no_symmetry_k4"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/ssm_no_symmetry_k4" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/ssm_no_symmetry_shift_sweep" --model-chunk-size-bwd 512 --protocol figure3 --input-dir "${SR_FILTER_SSM_NOSYMM_INPUT:?set SR_FILTER_SSM_NOSYMM_INPUT}" --system ssm --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_k2"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_k2" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 2 --lambda-quantiles 0.9,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_k3"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_k3" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 3 --lambda-quantiles 0.9,0.5,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_k4"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_k4" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_k5"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_k5" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 5 --lambda-quantiles 0.9,0.7,0.4,0.2,0.1 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_qgrid_a"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_qgrid_a" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.95,0.8,0.5,0.2 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_qgrid_b"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_qgrid_b" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol figure3 --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.8,0.6,0.3,0.05 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_bagged_k2"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_bagged_k2" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol bagged --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 2 --lambda-quantiles 0.9,0.1 --bagged-lambdas 1e-4,1e-5 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_bagged_k3"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_bagged_k3" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol bagged --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 3 --lambda-quantiles 0.9,0.5,0.1 --bagged-lambdas 1e-4,1e-5 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_bagged_k4"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_bagged_k4" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol bagged --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --bagged-lambdas 1e-3,1e-4,1e-5,1e-6,1e-7,1e-8,1e-9 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "tfim_bagged_k5"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_bagged_k5" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/tfim_shift_sweep" --protocol bagged --input-dir "${SR_FILTER_TFIM_CANONICAL_INPUT:?set SR_FILTER_TFIM_CANONICAL_INPUT}" --system tfim --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 5 --lambda-quantiles 0.9,0.7,0.4,0.2,0.1 --bagged-lambdas 1e-4,1e-5 --n-val 120000 --validation-sample-chunk 12000 --delta-batch-size 10'''
+
+[[runs]]
+id = "j1j2_no_symmetry_bagged_k4"
+command = '''sr-filter fixed-data --output-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_no_symmetry_bagged_k4" --diagnostic-dir "${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?set SR_FILTER_FIXED_DATA_WORKSPACE_ROOT}/j1j2_no_symmetry_shift_sweep" --model-chunk-size-bwd 512 --protocol bagged --input-dir "${SR_FILTER_J1J2_NOSYMM_INPUT:?set SR_FILTER_J1J2_NOSYMM_INPUT}" --system j1j2 --source-train-lambda 1e-4 --source-steps all --repeat-count 20 --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --bagged-lambdas 1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7 --n-val 100000 --validation-round-samples 4000 --validation-sample-chunk 4000 --jvp-chunk 2000 --delta-batch-size 10'''

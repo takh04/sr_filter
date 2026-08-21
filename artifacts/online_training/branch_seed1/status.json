@@ -1,0 +1,83 @@
+{
+  "branch_rng_seed": 1,
+  "camera_ready_gate": true,
+  "completed_endpoint_runs": {
+    "ms_sr": 2,
+    "spring": 2,
+    "sr": 2
+  },
+  "curve_rows": {
+    "ms_sr": 125,
+    "shared_sr": 1,
+    "spring": 500,
+    "sr": 500
+  },
+  "endpoint_error_column": "sigma_per_site",
+  "endpoint_error_definition": "max(round-level SE, eight-round block SE)",
+  "endpoint_replica_consistency": {
+    "ms_sr": {
+      "max_allowed_replica_difference_z": 5.0,
+      "replica_difference_z": 2.061114259483458,
+      "status": "pass"
+    },
+    "spring": {
+      "max_allowed_replica_difference_z": 5.0,
+      "replica_difference_z": 0.33127454837651416,
+      "status": "pass"
+    },
+    "sr": {
+      "max_allowed_replica_difference_z": 5.0,
+      "replica_difference_z": 0.4609444185449711,
+      "status": "pass"
+    }
+  },
+  "equal_sampling_budget_units": 500,
+  "experiment_id": "online.j1j2.no_symmetry.branch1800.seed1.v1",
+  "ms_sr_protocol_audit": {
+    "base_driver_sampling_calls": 0,
+    "base_driver_solves": 0,
+    "candidate_batches_per_update": 4,
+    "candidate_sample_counts_final_update": [
+      8192,
+      8192,
+      8192,
+      8192
+    ],
+    "candidate_solves_per_update": 4,
+    "checkpoint_sha256": "43296f4261a95d4c3290d9c1c5e41bcc98c1f8c1fb7f0009267dfb05cdd68c48",
+    "k": 4,
+    "lambda_grid": [
+      0.01,
+      0.001,
+      0.0001,
+      1e-05
+    ],
+    "lambda_policy": "fixed_grid",
+    "optimizer_updates": 125,
+    "samples_per_candidate_batch": 8192,
+    "sampling_solve_units": 500,
+    "stacking_protocol": "exact_leave_one_batch_out",
+    "status": "audited_complete",
+    "update_protocol": "fixed_grid_exact_loo",
+    "weight_fit_sampling_calls": 0,
+    "weight_fit_solves": 0
+  },
+  "required_endpoint_replicas": {
+    "rounds_each": 512,
+    "runs_per_arm": 2,
+    "seeds": [
+      12345,
+      98765
+    ]
+  },
+  "schema_version": 1,
+  "source_checkpoint_step": 1800,
+  "status": "complete",
+  "target_curve_rows": {
+    "ms_sr": 125,
+    "shared_sr": 1,
+    "spring": 500,
+    "sr": 500
+  },
+  "warning": "The step-1800 source checkpoint is shared only by this branch's three optimizer arms; branch_seed0 uses a different step-2500 source checkpoint."
+}

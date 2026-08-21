@@ -1,0 +1,837 @@
+\documentclass{article}
+
+% SOURCE_DATE_EPOCH fixes the PDF dates in the build environment. Suppress the
+% otherwise implementation-dependent trailer ID and pdfTeX provenance records.
+\ifdefined\pdftrailerid
+  \pdftrailerid{}
+\fi
+\ifdefined\pdfsuppressptexinfo
+  \pdfsuppressptexinfo=-1
+\fi
+
+\PassOptionsToPackage{numbers, compress}{natbib}
+\usepackage[final,main]{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{wrapfig}
+\usepackage{multirow}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\minSR}{minSR}
+\newcommand{\Expect}{\mathbb{E}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Snorm}[1]{\left\| #1 \right\|_S^2}
+
+\title{Stochastic Reconfiguration as Statistical Filtering for Overparameterized Neural Quantum States}
+
+\author{%
+  Tak Hur \\
+  Department of Statistics and Data Science \\
+  Yonsei University \\
+  Seoul, Republic of Korea \\
+  \texttt{takh0404@yonsei.ac.kr} \\
+}
+
+\hypersetup{
+  pdftitle={Stochastic Reconfiguration as Statistical Filtering for Overparameterized Neural Quantum States},
+  pdfauthor={Tak Hur}
+}
+  
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Stochastic reconfiguration (SR) is the standard optimizer for neural quantum
+states (NQS), but modern NQS often have far more parameters than Monte Carlo
+samples. We show that in this regime the diagonal shift is more than a numerical
+stabilizer. It acts as a statistical filter for finite-sample generalization.
+At a fixed wave function, SR is ridge regression from tangent features to the
+centered local energy. Its residual is the \emph{expressivity gap}, the part of
+imaginary-time evolution outside the current tangent space. This gap is
+orthogonal to the tangent space in population, but finite batches make it act as
+noise that SR can overfit. The shift therefore balances shrinkage of useful
+update directions against variance from fitting sampled residuals.
+Exact $4\times4$ $J_1$-$J_2$ experiments separate two effects of
+overparameterization. Larger tangent spaces help when they reduce the
+expressivity gap, but they can hurt when they overfit a fixed gap. In a $100$-site
+transverse-field Ising family trained with a foundation NQS, validation risk is
+U-shaped in the shift while variance decreases, matching the noisy-ridge model.
+This view leads to multi-shift SR (MS-SR), which averages independent ridge
+solves at several shifts to form a richer, lower-variance spectral filter.
+Checkpoint diagnostics show that its benefit is regime-dependent, and controlled
+late-stage branches compare MS-SR with SR and SPRING at equal solve budget.
+MS-SR closely tracks SR and finishes below SPRING in both branches, while the
+same diagnostics identify regimes where a single oracle-tuned shift is preferable.
+\end{abstract}
+
+\section{Introduction}
+
+Stochastic Reconfiguration (SR) remains the dominant optimizer for neural quantum
+states (NQS), but the regime in which it operates has changed fundamentally.
+Classical variational Monte Carlo with Jastrow, Gutzwiller, and projected
+mean-field ansatzes, as well as early RBM-based NQS, had modest parameter
+counts \citep{mcmillan1965ground, yokoyama1987variational,
+capello2005variational, tahara2008variational, sorella1998green,
+sorella2001generalized, carleo2017solving}.
+Kernel-form SR (minSR) removed the need to form the full $P\times P$ quantum geometric tensor (QGT), enabling
+the shift to transformer-based and foundation-style wave functions with millions of parameters
+\citep{choo2020fermionic, hermann2020paulinet, pfau2020ferminet,
+hibatallah2020rnn, vonglehn2023psiformer, chen2024empowering,
+rende2024simple, sprague2024variational, kim2024neural,
+nutakki2025design, rende2025foundation}.
+However, minSR still solves a dense $N_s\times N_s$ system
+built from the empirical NTK matrix, at cost $O(N_s^2 P)$ to form and $O(N_s^3)$ to
+solve. Increasing $N_s$ therefore remains the practical bottleneck, pushing modern
+NQS from the sample-rich regime of classical VMC ($P<N_s$) into a parameter-rich regime where $P$ exceeds $N_s$ by one to three
+orders of magnitude (Figure~\ref{fig:p_over_ns_literature}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/p_over_ns_literature.pdf}
+    \caption{Historical shift in the parameter-to-sample ratio used by VMC/NQS
+    calculations. The dashed line marks \(P=N_s\). Marker shape denotes domain:
+    circles are spin/lattice NQS and diamonds are electronic-structure NQS.
+    Values use each source's parameter-count convention and raw optimizer batch
+    size; approximate source-reported counts are included as order-of-magnitude
+    points. Sources: \citep{saito2017bosehubbard,
+    saitokato2018machine,choo2020fermionic,zen2020critical,hibatallah2020rnn,
+    pfau2020ferminet,gutierrez2022real,vonglehn2023psiformer,
+    rende2024simple,chen2024empowering,sprague2024variational}.}
+    \label{fig:p_over_ns_literature}
+\end{figure}
+
+Each SR update solves a linear system with an empirical QGT, which can be
+ill-conditioned when estimated from finitely many Monte Carlo
+samples. The standard remedy is to add a diagonal shift before solving
+\citep{sorella1998green,sorella2001generalized,carleo2017solving}. Historically, this shift was therefore understood mainly as a
+numerical conditioning device. In the modern minSR regime, however, the
+same operation is applied when the number of variational parameters can far exceed
+the number of samples, so its role may be statistical as well as numerical.
+This raises the central question of this paper: is the diagonal shift in SR
+merely a numerical stabilizer, or is it a statistical filter that makes
+overparameterized finite-sample updates generalize, and can this view lead to
+better filters than a single $\lambda$?
+
+This question exposes the central tension of modern NQS optimization. More expressive neural quantum states can reduce the \emph{expressivity gap}, the
+component of imaginary-time evolution outside the current tangent space.
+However, finite-sample SR can also overfit the part of this gap that remains.
+The central contributions of this work are:
+
+\begin{itemize}
+    \item We formulate SR as a misspecified ridge-regression
+    problem. The expressivity gap acts as finite-sample residual noise, yielding
+    an exact held-out error identity and a spectral risk approximation for the
+    bias--variance role of the diagonal shift \(\lambda\).
+
+    \item We test this mechanism in both exactly tractable small-scale and modern
+    large-scale NQS settings. Exact \(4\times4\) matched-noise and matched-state experiments
+    separate finite-sample overfitting from expressivity-gap reduction.
+    Large-scale shared-checkpoint diagnostics show the predicted U-shaped
+    validation risk and monotone variance reduction as \(\lambda\) increases.
+
+    \item We use the filter view to design multi-shift SR (MS-SR), which
+    combines independent ridge solves at multiple shifts. Checkpoint-local
+    ablations isolate multi-shift filtering, independent-batch averaging, and
+    learned stacking. In two equal-budget late-stage branches, fixed-grid MS-SR
+    closely tracks SR and finishes below SPRING; robustness and wall-clock
+    studies delimit when the additional batches are worthwhile.
+
+\end{itemize}
+
+Section~\ref{sec:ridge} develops the noisy ridge-regression view of SR.
+Sections~\ref{sec:small} and~\ref{sec:large_scale} validate its predictions in
+exact small-scale and modern large-scale settings. Section~\ref{sec:mssr} shows
+that the same perspective leads naturally to MS-SR as a stronger practical
+alternative to single-shift SR.
+
+\section{SR as Misspecified Ridge Regression}\label{sec:ridge}
+
+Throughout this section we fix a checkpoint \(\theta\) and assume that the wavefunction and Hamiltonian are real in the
+sampling basis for notational simplicity. The complex case is obtained by replacing transposes with
+Hermitian conjugates (see Appendix~\ref{app:proofs} for detail).
+
+\paragraph{SR as tangent-space regression.}
+Let $\psi_\theta$ be a neural quantum state with Born distribution
+\(\pi(x)=|\psi_\theta(x)|^2/\|\psi_\theta\|^2\). Define the centered tangent
+features and centered local energy by
+\[
+    O_c(x)=\nabla_\theta\log\psi_\theta(x)
+    -\Expect_\pi[\nabla_\theta\log\psi_\theta],
+    \qquad
+    H_{\mathrm{loc},c}(x)=H_{\mathrm{loc}}(x)-E(\theta),
+\]
+where \(H_{\mathrm{loc}}(x)=\langle x|H|\psi_\theta\rangle/
+\langle x|\psi_\theta\rangle\) and
+\(E(\theta)=\Expect_\pi[H_{\mathrm{loc}}]\). Under normalized imaginary-time
+evolution, the log amplitude changes as
+\(\Delta\log\psi_\theta(x)=-\eta H_{\mathrm{loc},c}(x)+O(\eta^2)\). A parameter
+update \(\theta^+=\theta-\eta\delta\) changes the log amplitude as
+\(\log\psi_{\theta^+}(x)-\log\psi_\theta(x)
+=-\eta O_c(x)^T\delta+O(\eta^2)\), up to an \(x\)-independent normalization
+term. Matching these first-order changes shows that fixed-checkpoint SR fits
+tangent predictions \(O_c(x)^T\delta\) to the centered local energy \(H_{\mathrm{loc},c}(x)\).
+
+Writing \(S^\dagger\) for the Moore--Penrose pseudoinverse of
+\(S=\Expect_\pi[O_c(x)O_c(x)^T]\), and setting
+\(g=\Expect_\pi[O_c(x)H_{\mathrm{loc},c}(x)]\), the ideal fixed-checkpoint SR
+direction is the population least-squares solution
+\begin{equation}
+\label{eq:population_sr_regression}
+    \delta^*
+    =
+    S^\dagger g
+    \in
+    \argmin_\delta
+    \Expect_\pi\!\left[
+        \bigl(O_c(x)^T\delta-H_{\mathrm{loc},c}(x)\bigr)^2
+    \right].
+\end{equation}
+
+\paragraph{Empirical SR as misspecified ridge regression.}
+The centered local energy need not be exactly representable by the current
+tangent features. We define the tangent-space expressivity gap
+$
+    \epsilon(x)
+    =
+    H_{\mathrm{loc},c}(x)-O_c(x)^T\delta^* .
+$
+The normal equations imply \(\Expect_\pi[\epsilon(x)O_c(x)]=0\), and the gap
+variance is
+$
+    \sigma_{\mathrm{gap}}^2
+    =
+    \Expect_\pi[\epsilon(x)^2]
+    =
+    \operatorname{Var}_\pi(H_{\mathrm{loc}})
+    -
+    g^T S^\dagger g .
+$
+We call \(\epsilon(x)\) the misspecification noise: it is the part of the
+imaginary-time target that lies outside the current tangent space.
+
+Given a Monte Carlo batch \(\mathcal D=\{x_j\}_{j=1}^{N_s}\), empirical SR solves
+the ridge problem
+\[
+    \hat\delta_\lambda=(\hat S+\lambda I)^{-1}\hat g,
+    \qquad
+    \hat S=\frac1{N_s}\sum_{j=1}^{N_s}O_c(x_j)O_c(x_j)^T,
+    \qquad
+    \hat g=\frac1{N_s}\sum_{j=1}^{N_s}O_c(x_j)H_{\mathrm{loc},c}(x_j).
+\]
+Although \(\epsilon(x)\) is orthogonal to the tangent features in population, it
+is still present in the sampled targets \(H_{\mathrm{loc},c}(x_j)\). An
+overparameterized empirical solve can therefore memorize this residual on the
+batch, even though it does not correspond to a generalizable tangent-space
+update. In this sense, the expressivity gap behaves as regression noise.
+
+\paragraph{Excess risk analysis.}
+Here, we are interested in \(S\)-norm excess risk
+$
+    \mathcal E_\lambda
+    =
+    \Expect_{\mathcal D}
+    \|\hat\delta_\lambda-\delta^*\|_S^2,
+$
+where the expectation is over the Monte Carlo batch used to form
+\(\hat\delta_\lambda\). This is the out-of-sample error of the checkpoint-local
+ridge problem with features \(O_c(x)\), target \(H_{\mathrm{loc},c}(x)\), and
+residual noise \(\epsilon(x)\).
+
+The exact bias--variance identity, together with the spectral proxy (see Appendix~\ref{app:proofs} for details), gives
+\begin{equation}\label{eq:spectral_risk}
+    \mathcal E_\lambda =
+    \underbrace{
+    \Snorm{\Expect_{\mathcal D}[\hat\delta_\lambda]-\delta^*}
+    }_{\text{Bias}}
+    +
+    \underbrace{
+    \Expect_{\mathcal D}
+    \Snorm{\hat\delta_\lambda-\Expect_{\mathcal D}[\hat\delta_\lambda]}
+    }_{\text{Variance}}
+    \approx
+    \underbrace{
+    \sum_i
+    s_i
+    \left(\frac{\lambda}{s_i+\lambda}\right)^2
+    (\beta_i^*)^2
+    }_{\mathcal B_{\mathrm{shrink}}(\lambda)}
+    +
+    \underbrace{
+    \frac{\sigma_{\mathrm{gap}}^2}{N_s}
+    \sum_i
+    \left(\frac{s_i}{s_i+\lambda}\right)^2
+    }_{\mathcal V_{\mathrm{gap}}(\lambda)} ,
+\end{equation}
+where \(S=V\operatorname{diag}(s_i)V^T\) and
+\(\beta_i^*=(V^T\delta^*)_i\). The first term is shrinkage bias: it grows when
+\(\lambda\) damps useful components of \(\delta^*\). The second term is
+finite-sample variance: it decreases because the same filter suppresses fits to
+sampled gap residuals. Thus \(\lambda\) is a statistical regularizer, not only a
+numerical tolerance. Standard SR, however, is restricted to the one-parameter
+filter family \(s/(s+\lambda)\), motivating the multi-\(\lambda\) filters in
+Section~\ref{sec:mssr}.
+
+This \(S\)-norm excess risk is physically relevant because it is closely related to the infidelity, a standard distance measure between quantum states. For bounded updates,
+\begin{equation}\label{eq:fs_local_metric}
+    \mathcal I_\theta(\delta,\delta')
+    =
+    1-
+    \left|
+    \left\langle
+        \psi_{\theta-\eta\delta}
+        \middle|
+        \psi_{\theta-\eta\delta'}
+    \right\rangle
+    \right|^2
+    =
+    \eta^2\Snorm{\delta-\delta'}
+    +
+    O(\eta^3).
+\end{equation}
+Therefore \(\mathcal E_\lambda\) controls the expected local infidelity between
+the ideal population update and the empirical SR update, up to the factor
+\(\eta^2\) and higher-order terms.
+
+\paragraph{Large-system diagnostics for excess risk and variance.}
+For small systems, the population quantities \(S\), \(\delta^*\),
+\(\sigma_{\mathrm{gap}}^2\), and
+\(\|\hat\delta_\lambda-\delta^*\|_S^2\) can be computed by exact diagonalization.
+This is impossible in the large scale regimes where modern NQS are tuned
+and compared. We therefore use two fixed-checkpoint diagnostics that require
+only held-out predictions.
+
+The first diagnostic is a validation residual. Let
+\(\mathcal D_{\mathrm{val}}\) be independent of the batches used to compute the
+SR updates. Since
+\(H_{\mathrm{loc},c}(x)=O_c(x)^T\delta^*+\epsilon(x)\) with
+\(\Expect_\pi[\epsilon(x)O_c(x)]=0\), any fixed update \(\delta\) satisfies
+\begin{equation}\label{eq:rval_decomp}
+    R_{\mathrm{val}}(\delta)
+    =
+    \frac1{|\mathcal D_{\mathrm{val}}|}
+    \sum_{x\in\mathcal D_{\mathrm{val}}}
+    \bigl(O_c(x)^T\delta-H_{\mathrm{loc},c}(x)\bigr)^2,
+    \qquad
+    \Expect_{\mathcal D_{\mathrm{val}}}
+    \left[R_{\mathrm{val}}(\delta)\right]
+    =
+    \|\delta-\delta^*\|_S^2+\sigma_{\mathrm{gap}}^2 .
+\end{equation}
+Thus, for independent SR updates
+\(\hat\delta_{\lambda,1},\dots,\hat\delta_{\lambda,m}\) at the same checkpoint,
+we use
+\(\widehat{\mathcal E}_{\mathrm{val}}(\lambda)
+=m^{-1}\sum_{j=1}^m R_{\mathrm{val}}(\hat\delta_{\lambda,j})\). Its expectation
+is \(\mathcal E_\lambda+\sigma_{\mathrm{gap}}^2\), so it tracks excess risk plus the expressivity-gap.
+
+The second diagnostic measures how much the update varies across independent
+training batches. With
+\(\bar\delta_\lambda=m^{-1}\sum_j\hat\delta_{\lambda,j}\), define
+\begin{equation}\label{eq:vmb_def}
+    \mathcal V_{\mathrm{mb}}(\lambda)
+    =
+    \frac1{m-1}
+    \sum_{j=1}^m
+    \frac1{|\mathcal D_{\mathrm{val}}|}
+    \sum_{x\in \mathcal D_{\mathrm{val}}}
+    \bigl(O_c(x)^T(\hat\delta_{\lambda,j}-\bar\delta_\lambda)\bigr)^2 .
+\end{equation}
+As \(m\) and the validation batch grow, this converges to the variance component
+of the excess risk. Both diagnostics are practical at large scale because they only require
+held-out tangent-feature predictions. Since they do not require forming or
+solving a validation QGT or NTK system, they can be evaluated on validation
+batches much larger than the SR training batch with modest computational cost.
+
+Together, these diagnostics test the bias and variance role of the diagonal
+shift at a fixed checkpoint. Increasing \(\lambda\) first suppresses noisy
+small-eigenvalue directions, so \(\widehat{\mathcal E}_{\mathrm{val}}\) can
+decrease as variance falls. Once \(\lambda\) also suppresses useful update
+directions, shrinkage bias dominates and the validation curve rises. The
+predicted signature is therefore a U-shaped
+\(\widehat{\mathcal E}_{\mathrm{val}}\) with a monotonically decreasing
+\(\mathcal V_{\mathrm{mb}}\).
+
+\section{Small-scale Dissection of Expressivity and Overfitting in SR}\label{sec:small}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/figure2.pdf}
+    \caption{Small-scale SR risk geometry for the periodic \(4\times4\)
+    \(J_1\)-\(J_2\) model at \(N_s=4096\) and \(\lambda=10^{-9}\). Panels compare
+    empirical predictions (y-axis) with ideal tangent-space
+    predictions (x-axis). Matched-noise exposes ViT overfitting at
+    comparable noise \(\sigma_{\mathrm{gap}}^2\). Matched-state shows the ViT's larger tangent space reduces
+    the expressivity gap and excess risk. Reported uncertainties are one sample
+    standard error across the $100$ matched-noise or $10$ matched-state
+    independently resampled training batches.}
+    \label{fig:smallscale_paradox}
+\end{figure}
+
+This section tests the mechanism of Section~\ref{sec:ridge} in an exactly
+diagonalizable spin-$1/2$ system. We use the periodic $4\times4$ square-lattice
+$J_1$-$J_2$ Heisenberg model
+$
+    H
+    =
+    J_1\sum_{\langle i,j\rangle}\mathbf S_i\cdot\mathbf S_j
+    +
+    J_2\sum_{\langle\!\langle i,j\rangle\!\rangle}
+    \mathbf S_i\cdot\mathbf S_j .
+$
+We set $J_2/J_1=0.5$, which is a strongly frustrated point. Here $\mathbf S_i$ is the spin-$1/2$ operator at site $i$, while
+$\langle i,j\rangle$ and $\langle\!\langle i,j\rangle\!\rangle$ denote
+nearest-neighbor and next-nearest-neighbor bonds.
+
+All SR solves use a fixed sample budget of $N_s=4096$. We compare an
+underparameterized RBM with $P/N_s=0.27$ to an overparameterized Vision
+Transformer with $P/N_s=3.28$. For the selected comparisons, we draw $100$
+independent training batches for matched noise and $10$ for matched state,
+then compute the corresponding empirical shifted-SR updates
+$\hat\delta_\lambda(\mathcal D_b)$. Because the $4\times4$ system is exactly
+diagonalizable, the population QGT $S$, the population target update
+$\delta^*$, and the expressivity-gap variance $\sigma_{\mathrm{gap}}^2$ are
+computed exactly over the full Hilbert space. We estimate the excess risk by
+averaging $\|\hat\delta_\lambda(\mathcal D_b)-\delta^*\|_S^2$ over the
+independent batches, and report the sample mean with one sample standard error
+(the trial sample standard deviation divided by the square root of the number
+of batches). Thus, unlike the
+large-system diagnostic $\widehat{\mathcal E}_{\mathrm{val}}$, this small-scale
+measurement uses the exact population geometry rather than a validation
+approximation. We use the near-ridgeless shift
+$\lambda=10^{-9}$, which deliberately exposes the tendency of empirical SR to
+fit sample-specific expressivity-gap noise.
+Equivalently, Figure~\ref{fig:smallscale_paradox} visualizes this excess risk
+pointwise: deviations from the diagonal measure how much the empirical
+prediction $O_c(x)^T\hat\delta_\lambda$ differs from the ideal tangent-space
+prediction $O_c(x)^T\delta^*$ on training (red) and held-out (blue) configurations.
+
+The experiment separates two effects that are coupled.
+The matched-noise comparison keeps $\sigma_{\mathrm{gap}}^2$ approximately fixed
+and tests the finite-sample cost of a larger tangent space. The matched-state
+comparison keeps the represented wavefunction approximately fixed and tests the
+expressivity benefit of the larger tangent space. Full model and optimization
+details are given in Appendix~\ref{app:small}.
+
+\paragraph{Matched-noise comparison.}
+To test the finite-sample cost of overparameterization, we select independently
+trained RBM and ViT checkpoints with comparable expressivity-gap variance. In
+Figure~\ref{fig:smallscale_paradox} panel (a) and (b), both values of
+$\sigma_{\mathrm{gap}}^2$ are close to $0.8$. At
+$\lambda=10^{-9}$, the RBM remains close to the ideal population update, with
+$\mathcal E_\lambda\approx0.53\pm0.008$. The ViT has comparable
+misspecification noise, but its empirical solve fits the sampled residual much
+more strongly, increasing the excess-risk estimate to
+$\mathcal E_\lambda\approx3.39\pm0.073$. This is the variance-driven failure mode
+predicted by Eq.~\eqref{eq:spectral_risk}. When the expressivity gap is held fixed,
+a larger tangent space gives the empirical SR update more directions in which to
+fit sample-specific noise.
+
+\paragraph{Matched-state comparison.}
+To isolate the benefit of a larger tangent space, we freeze a partially
+converged RBM checkpoint and fit a ViT to represent the same quantum state by
+minimizing infidelity~\cite{sinibaldi2023unbiasing,gravina2410neural}. The two represented states have fidelity \(F\geq0.98\).
+Thus the wavefunction is nearly fixed, while the tangent space changes. Under
+this matched-state protocol, ViT's larger tangent space lowers the
+expressivity gap variance from \(\sigma_{\mathrm{gap}}^2=1.95\) to \(0.816\).
+The excess-risk estimate also decreases from
+\(\mathcal E_\lambda\approx2.53\pm0.18\) to
+\(\mathcal E_\lambda\approx1.59\pm0.079\). Thus overparameterization can improve
+SR generalization when its additional tangent directions reduce enough
+misspecification noise.
+
+Together, these comparisons show the central tension of overparameterized SR.
+A larger model improves the update by reducing the expressivity gap, but it also worsens the update when a comparable gap remains and the finite-sample
+solve overfits it. This emphasizes the role of the diagonal shift $\lambda$ as a statistical filter that controls how much sampled
+gap noise enters the SR update. 
+
+\section{Large-Scale Checkpoint Diagnostics of the Noisy-Ridge Mechanism}
+\label{sec:large_scale}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/figure3_tfim_fixed_data.pdf}
+    \caption{Large-scale shared-checkpoint test of the noisy-ridge mechanism on
+    the periodic \(L=100\) transverse-field Ising model with \(h\) ranging from \(0.8\) to \(1.2\) with foundational NQS.
+    A fixed set of late-training checkpoints is reused while only the
+    solve-time shift $\lambda$ is varied. $\widehat{\mathcal E}_{\mathrm{val}}$ is U-shaped, while $\mathcal V_{\mathrm{mb}}$ decreases monotonically with
+    $\lambda$, matching the two predictions of Section~\ref{sec:ridge}. Error
+    bars are one standard error across the ten checkpoint-level means.}
+    \label{fig:large_scale_ucurve}
+\end{figure}
+
+The exact $4\times4$ study isolates the noisy-ridge mechanism using population
+quantities. We next test whether the same mechanism remains visible in modern
+overparameterized NQS, where the population QGT, population SR direction, and
+expressivity-gap variance are unavailable. We therefore test the mechanism using the
+checkpoint-local diagnostics introduced in Section~\ref{sec:ridge}.
+
+We use a foundation neural quantum state (FNQS) on the $L=100$ periodic
+one-dimensional transverse-field Ising model (TFIM) family,
+$
+    H=-h\sum_i X_i-\sum_i Z_iZ_{i+1},
+$
+with $h\in[0.8,1.2]$. A single conditional
+wave function $\log\psi_\theta(x;h)$ is trained across many Hamiltonian
+parameters, so the SR update must aggregate information over a family of
+Hamiltonians. The model has
+$P=198{,}144$ parameters, while each SR step uses a batch of
+$N_s=12{,}000$ samples, split over $6000$ training $h$ values with two spin
+configurations per field. We use the same architectural and sampler setting as
+\citet{rende2025foundation} (see Appendix~\ref{app:large} for experimental details).
+
+The diagnostic experiment uses a shared-checkpoint protocol. We first take ten
+late-training checkpoints from the run trained with
+$\lambda_{\mathrm{train}}=10^{-4}$. These checkpoints are then held fixed. At
+each checkpoint, we perform an offline sweep over the solve-time shift
+$
+    \lambda\in\{10^{-8},10^{-7},\ldots,10^{-1}\},
+$
+recomputing standard SR updates on fresh resampled batches for each value of
+$\lambda$. This design keeps the wave function, tangent geometry, and
+expressivity-gap fixed while varying only the ridge penalty. It therefore
+tests the local bias--variance mechanism directly, not the different training trajectories.
+
+For each checkpoint and each diagnostic shift, we construct $m=20$ independent
+standard-SR updates from independently resampled training batches. The validation
+diagnostic uses $120{,}000$ held-out samples, consisting of $6000$ held-out
+$h$ values, disjoint from the training $h$ values, and $20$ spin configurations per
+$h$ value. Predictions are centered separately for each $h$ value, since each
+Hamiltonian parameter has its own local-energy distribution. The validation pass
+then estimates both $\widehat{\mathcal E}_{\mathrm{val}}$ and
+$\mathcal V_{\mathrm{mb}}$ without forming or solving any validation QGT system.
+
+Figure~\ref{fig:large_scale_ucurve} shows the fixed-checkpoint signature
+predicted by the noisy-ridge view. The
+$\hat{\mathcal{E}}_{\mathrm{val}}$ curve is U-shaped in \(\lambda\), while
+\(\mathcal V_{\mathrm{mb}}\) decreases as \(\lambda\) increases. Since all
+shifts are evaluated on the same checkpoints, this trend reflects the
+solve-time ridge filter rather than different training trajectories. Small
+shifts leave useful directions nearly undamped but fit more batch-dependent
+noise. Large shifts reduce this variance but also shrink useful population
+directions.
+
+\section{Multi-Shift SR for Statistical Filtering and Variance Reduction}
+\label{sec:mssr}
+
+Motivated by the noisy-ridge view, we introduce multi-shift SR (MS-SR), an
+optimizer that replaces the single shifted SR solve with a mixture of shifted
+SRs computed on independent batches. Standard SR uses one ridge scale
+and therefore applies the same spectral filter \(s/(s+\lambda)\) to every QGT
+eigendirection. MS-SR instead combines several regularization scales, while the
+independent batches decorrelate finite-sample errors.
+
+At checkpoint \(\theta_t\), MS-SR draws \(K\) independent batches
+\(\mathcal D_1,\ldots,\mathcal D_K\), chooses shifts \(\lambda_k\) from
+empirical NTK-spectrum quantiles, and computes candidate updates
+\(\hat\delta_k=\minSR(\mathcal D_k,\lambda_k)\). It then forms
+\(\hat\delta_{\mathrm{MS}}=\sum_{k=1}^K w_k\hat\delta_k\), with
+\(\mathbf w\in\Delta^{K-1}\). The weights are selected by leave-one-batch-out
+stacking, so each candidate update is evaluated only on batches that were not
+used to compute it. The full procedure is given in
+Algorithm~\ref{alg:mssr_appendix} in Appendix~\ref{app:mssr}.
+
+This construction has a simple bias--variance interpretation. For fixed shifts
+and mixture weights, define
+$
+    \bar\delta_k
+    =
+    \Expect_{\mathcal D_k}
+    \left[
+        \hat\delta_k
+    \right].
+$
+Then the excess risk decomposes exactly as
+\begin{equation}
+\label{eq:mssr_decomp}
+    \Expect
+    \left[
+        \left\|
+            \hat\delta_{\mathrm{MS}}-\delta^*
+        \right\|_S^2
+    \right] =
+    \left\|
+        \sum_{k=1}^K
+        w_k\bar\delta_k
+        -
+        \delta^*
+    \right\|_S^2 +
+    \Expect
+    \left[
+        \left\|
+            \sum_{k=1}^K
+            w_k
+            \left(
+                \hat\delta_k
+                -
+                \bar\delta_k
+            \right)
+        \right\|_S^2
+    \right].
+\end{equation}
+The first term is the bias of the average filter. The second term is the
+finite-batch variance of the average update. MS-SR targets both terms: multiple
+shifts enlarge the filter class, while independent batches reduce the variance
+of the noisy solves.
+
+\paragraph{Why multiple shifts help.}
+\label{par:multi_lambda}
+
+Consider the population spectral approximation from
+Section~\ref{sec:ridge}. If
+\(S=V\operatorname{diag}(s_i)V^T\), then a single ridge solve applies the
+filter
+$
+    f_{\lambda}(s)
+    =
+    {s}/{(s+\lambda)}
+$
+to each eigendirection. A convex mixture of ridge solves applies instead
+$
+    f_{\mathbf w,\boldsymbol\lambda}(s)
+    =
+    \sum_k
+    w_k
+    {s}/{(s+\lambda_k)}.
+$
+Thus MS-SR is still a spectral filter, but it is no longer restricted to the
+single-shift family.
+
+The difference is clearest at the two ends of the spectrum. For small \(s\),
+\(f_{\mathbf w,\boldsymbol\lambda}(s)
+=s\sum_k w_k/\lambda_k+O(s^2)\). For large \(s\),
+\(f_{\mathbf w,\boldsymbol\lambda}(s)
+=1-(\sum_k w_k\lambda_k)/s+O(s^{-2})\).
+With a single shift, the same \(\lambda\) controls both the suppression of
+low-eigenvalue directions and the residual shrinkage of high-eigenvalue
+directions. On the other hand, these two behaviors can be tuned separately with multiple shifts. 
+This can improve the aggregate bias--variance tradeoff when useful update directions
+and noise-sensitive directions are not controlled well by the same shift.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/figure4_mssr_ablation_oracle.pdf}
+    \caption{Checkpoint-local ablations for the ingredients of MS-SR at $K=4$.
+    Paired bars show raw $\widehat{\mathcal{E}}_\mathrm{val}$ and $\mathcal{V}_{\mathrm{mb}}$
+    averaged over ten fixed source checkpoints; error bars are one standard
+    error across checkpoints. Both single SR and bagged SR are
+    \emph{evaluation-oracle} baselines using the validation-optimal
+    $\lambda^*$ at each checkpoint. MS-SR selects its NTK-quantile shift grid
+    without validation tuning.}
+    \label{fig:mssr_diagnostics}
+\end{figure}
+\paragraph{Why independent batches help.}
+\label{par:multi_batch}
+
+The second term in Eq.~\eqref{eq:mssr_decomp} depends on the correlations
+between candidate updates. If the candidates are computed on independent
+batches, the cross terms vanish and
+$
+    \Expect
+        \|
+            \sum_k
+            w_k
+            (
+                \hat\delta_{\lambda_k}^{(k)}
+                -
+                \bar\delta_{\lambda_k}
+            )
+        \|_S^2
+    =
+    \sum_k
+    w_k^2
+    \hspace{0.1em}
+    \Expect
+        \|
+            \hat\delta_{\lambda_k}^{(k)}
+            -
+            \bar\delta_{\lambda_k}
+        \|_S^2.
+$
+For uniform weights, this is a factor-\(K\) reduction of the average
+single-batch variance in the ideal independent-batch limit.
+
+Independent batches produce a bagging-like effect by decorrelating the sampling
+noise across candidate updates. If all \(K\) shifts are solved on the same
+batch, the resulting candidates can still enrich the spectral filter, but their
+sampling errors remain shared. Consequently, the variance-reduction effect is lost.
+A single larger batch of size \(KN_s\) would also reduce variance, but it is substantially more expensive
+computationally, with cost \(O(K^3N_s^3)\). On the other hand,
+\(K\) independent solves at batch size \(N_s\) cost only \(O(KN_s^3)\) and can
+be run in parallel. MS-SR obtains the statistical benefit of a larger batch without paying the
+cubic cost of a single enlarged solve.
+
+
+\paragraph{Shift and weight selection.}
+\label{par:mssr_weights}
+
+MS-SR first chooses the shifts and then fits the mixture weights. In our
+checkpoint-local \(K=4\) experiments, the shifts are the empirical NTK-spectrum
+quantiles \(\{0.9,0.7,0.4,0.1\}\). These quantiles place the ridge transition
+scale at several parts of the
+empirical spectrum, producing candidate updates with different bias--variance
+tradeoffs rather than relying on a single regularization. The online comparison
+instead uses the predeclared fixed grid
+\(\{10^{-2},10^{-3},10^{-4},10^{-5}\}\).
+
+Given these shifts, Algorithm~\ref{alg:mssr_appendix} uses leave-one-batch-out stacking
+to choose the weights. Each candidate update is evaluated on batches that were
+not used to compute it. The weights minimize the held-out residual between
+tangent-feature predictions and centered local energies, giving a direct
+estimate of the regression risk from Eq.~\eqref{eq:rval_decomp}.
+
+
+\paragraph{Ablation study of MS-SR.}
+\label{par:mssr_ablations}
+
+Figure~\ref{fig:mssr_diagnostics} compares six checkpoint-local updates using
+ten fixed checkpoints from TFIM and from the $8\times8$ square-lattice
+$J_1$-$J_2$ model at $J_2/J_1=0.5$. The single and bagged baselines both use
+the per-checkpoint validation minimizer $\lambda^*$ over
+$\{10^{-8},\ldots,10^{-1}\}$; bagging averages four independent solves at that
+same $\lambda^*$. These are deliberately strong diagnostic oracles, not online
+methods. The shared-batch variants isolate multi-shift filtering, the
+independent-batch variants isolate averaging, and MS-SR adds stacking.
+
+The ordering is regime-dependent. On TFIM, where $\lambda^*=10^{-6}$ at all
+ten checkpoints, oracle bagging has lower validation risk than MS-SR
+($0.00617$ versus $0.00680$). At the training shift $10^{-4}$, however, bagging
+has risk $0.00933$, and MS-SR is lower on all ten checkpoints. On the harder
+$J_1$-$J_2$ checkpoints, MS-SR has risk $120.1$, versus $451.0$ for oracle
+bagging, a $73\%$ reduction. Thus the additional shifts are most useful when
+no stable single shift suffices; when the validation-optimal shift is stable,
+single-shift bagging can be preferable. Appendix~\ref{app:mssr_robustness}
+reports the fixed-shift, $K$, quantile, and source-shift studies, and
+Appendix~\ref{app:mssr_cost} reports measured wall time.
+
+\paragraph{Equal-budget online comparison.}
+\label{par:mssr_online}
+\input{generated/online_comparison_results}
+
+\section{Related Work}
+
+Neural quantum states have evolved rapidly from compact RBM-like ans\"atze to
+deep convolutional, recurrent, transformer-based, fermionic, and
+foundation-style wave functions
+\citep{carleo2017solving, hibatallah2020rnn, pfau2020ferminet,
+vonglehn2023psiformer, nomura2021dirac, rende2024simple,
+nutakki2025design, rende2025foundation}. Autoregressive NQS provide a
+complementary route to scalability because their normalized factorization
+permits sampling from the model Born distribution rather than
+Markov-chain sampling \citep{hibatallah2020rnn}. This changes the sampling and
+autocorrelation structure of VMC, but it does not remove the finite-sample
+nature of SR, since QGTs and forces are still estimated from finite samples.
+
+SR is the natural-gradient method of VMC, with the QGT playing the role of the
+Fisher metric on the variational manifold
+\citep{sorella1998green, sorella2001generalized, carleo2017solving}. Recent sample-space formulations, including minSR, avoid forming the full
+\(P\times P\) QGT and instead solve an \(N_s\times N_s\) kernel system, making
+SR practical for highly overparameterized NQS
+\citep{chen2024empowering, rende2024simple}. SPRING builds on this view with a
+Kaczmarz-inspired projected-increment update that reuses information across
+minibatches to accelerate convergence \citep{goldshlager2024spring,goldshlager2025sketch}. These
+methods improve the cost and convergence of SR, while our focus is the
+statistical filtering role of the diagonal shift.
+
+A parallel line of work approximates the QGT or Fisher metric structurally.
+KFAC uses Kronecker-factored curvature approximations and has been important in
+FermiNet-style electronic-structure VMC
+\citep{martens2015optimizing, pfau2020ferminet}. Block-diagonal
+QGT methods partition the NQS metric by network layers, preserving intra-layer
+curvature while suppressing noisy cross-layer correlations
+\citep{shokry2025blockqgt}. These approaches change the metric approximation.
+MS-SR is complementary: it keeps the sample-space SR geometry but replaces
+the single-shift ridge filter with a data-adaptive mixture of shifted solves.
+
+Our analysis connects SR to random-design ridge regression
+\citep{hsu2012random}. In this view, the local-energy target is generally
+misspecified by the current tangent space, and the expressivity gap
+acts as the irreducible residual noise. Sketch-and-project and Kaczmarz
+interpretations clarify the structure of the overparameterized linear solve
+\citep{strohmer2009randomized, goldshlager2024spring, goldshlager2025sketch}. The
+present work identifies the statistical source of the noise being fitted and
+uses that view to design richer spectral filters for SR.
+
+\section{Conclusion}
+
+Modern NQS optimization has entered a finite-sample, parameter-rich regime. In
+this regime the diagonal shift in SR is not just a safeguard against an
+ill-conditioned empirical QGT. It is also the spectral regularizer that
+determines how much of the sampled tangent-space target is trusted. By recasting
+a single SR step as misspecified ridge regression, we identified the
+tangent-space expressivity gap as the effective noise source: it is orthogonal
+to the tangent features in population, but it is present in every finite batch
+and can be fitted by overparameterized empirical solves.
+
+This viewpoint explains the apparent tension observed throughout the paper.
+Larger models improve SR when their tangent spaces reduce the expressivity gap,
+but they can also amplify finite-sample overfitting when a comparable gap
+remains. The exact small-system experiments and the large
+fixed-checkpoint diagnostics show the same bias--variance structure across
+scales.
+
+The filter perspective also leads to MS-SR, which mixes independent ridge
+solves at multiple shifts. Independent batches reduce variance, multiple shifts
+enlarge the filter class, and stacking adapts the mixture to the local
+checkpoint. The equal-budget online branches test whether this local advantage
+translates to training outcomes late in optimization. Across the two tested
+branches, MS-SR closely tracks SR, with opposite numerical ordering, and ends
+below SPRING in both; these are trajectory-level outcomes rather than a
+population optimizer ranking. The checkpoint ablations identify counter-regimes
+in which an oracle single shift is better.
+For the eigensolver implementation studied here, $K=4$ bagged SR and MS-SR take
+$4.00\times$ and $4.04\times$ the wall time of single SR, respectively; the
+method-specific overhead beyond the common four batches and solves is about
+$1\%$.
+
+\paragraph{Limitations.}\label{sec:limitations}
+The theory is checkpoint-local and its factor-$K$ variance statement requires
+independent candidate batches; autocorrelation reduces the effective sample
+size, and shared chains can correlate candidates. The online study covers two
+late branches of one $8\times8$ system rather than a broad optimizer benchmark,
+and MS-SR is not uniformly superior: oracle bagging wins on TFIM, and the
+Shastry--Sutherland negative result in Appendix~\ref{app:ssm_negative} shows
+failure when the shift grid is misspecified. MS-SR also spends $K$ times the
+sampling and solve budget of single SR. The timing ratios come from one H100
+hardware/software stack and need not transfer unchanged. The evaluation-oracle
+baselines intentionally select $\lambda^*$ on the same validation stream used
+to report risk, so they contain selection leakage. Endpoint error bars are
+finite-round MCMC standard errors and do not represent between-branch
+variation. These results therefore support a
+diagnostic, regime-dependent filtering rule rather than a universal optimizer
+ranking.
+
+Overall, overparameterization should not be avoided in NQS, but
+it should be treated with the right statistical regularization. Treating SR as a
+statistical filtering problem provides both a diagnostic language for
+understanding existing optimizers and a design principle for building more
+reliable ones.
+
+\clearpage
+\phantomsection\label{main:references:start}
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\clearpage
+\appendix
+\phantomsection\label{app:start}
+\input{appendix}
+
+\newpage
+\input{checklist}
+
+\end{document}

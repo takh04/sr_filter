@@ -1,0 +1,252 @@
+{
+  "checkpoints": [
+    {
+      "arm": null,
+      "branch_seed": 0,
+      "bytes": 3476137,
+      "id": "j1j2/no_symmetry/source_step_002500",
+      "original_sha256": "8e892b5aa13aeb391cd269d6f1201a6ba7f8832027e3aaca508253ec14e3aca5",
+      "path": "checkpoints/j1j2_no_symmetry_source_step_002500.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_002450"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 50,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "source",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 50,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "5064e9a2221e0c7702e7dde3ae8fb977eb641b0eee55ccb5b117635e4927bef5",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": null,
+      "branch_seed": 1,
+      "bytes": 3545173,
+      "id": "j1j2/no_symmetry/source_step_001800",
+      "original_sha256": "b68eade1b8d3c9a6d10f57ccf130fdf52119a877f623a95d8062992c2462d319",
+      "path": "checkpoints/j1j2_no_symmetry_source_step_001800.pkl",
+      "path_metadata_replacements": [],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 1800,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "source",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 1800,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "b575078ed8d6205804fc35c68ddbb8c5f143866480536e60ec8b184ff85b0fe9",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": "sr",
+      "branch_seed": 0,
+      "bytes": 3476140,
+      "id": "j1j2/no_symmetry/branch2500/seed0/sr_final",
+      "original_sha256": "0273e2286ef0fd10ee599439b28552fb3b40a56d7bc667a89c3e251989903c34",
+      "path": "checkpoints/j1j2_no_symmetry_branch2500_seed0_sr_final.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_002500"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 550,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "final_endpoint",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 550,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "8df6ec054504fa0f934f00b274d7bd11a601959b4f954098c8a2aac33c8a2ac3",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": "spring",
+      "branch_seed": 0,
+      "bytes": 3476128,
+      "id": "j1j2/no_symmetry/branch2500/seed0/spring_final",
+      "original_sha256": "5b8226f92b117ed5eda03c619953d296769bf707e27b09156de39eec3449926c",
+      "path": "checkpoints/j1j2_no_symmetry_branch2500_seed0_spring_final.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_002500"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 500,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "final_endpoint",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 500,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "4c44f62ed563c4258794e65579c983edc5bd45defdeba4d65b1a7651389b9430",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": "ms_sr",
+      "branch_seed": 0,
+      "bytes": 3477592,
+      "id": "j1j2/no_symmetry/branch2500/seed0/ms_sr_final",
+      "original_sha256": "9305640d2ac5764610e4da3db6494029af33b449a9fbf69ad1aefb2e798a6a9f",
+      "path": "checkpoints/j1j2_no_symmetry_branch2500_seed0_ms_sr_final.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_002500"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 125,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "final_endpoint",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 125,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "862ae125699b3afeeda7f3b1a64d3411145e284cf9215109d5b5b9d46afe26b0",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": "sr",
+      "branch_seed": 1,
+      "bytes": 3476124,
+      "id": "j1j2/no_symmetry/branch1800/seed1/sr_final",
+      "original_sha256": "b8308492bd1fed813963b1c65b8f3bac213bd41022e33e76a09e678fdc82c120",
+      "path": "checkpoints/j1j2_no_symmetry_branch1800_seed1_sr_final.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_001800"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 500,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "final_endpoint",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 500,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "0d74733ce9bf299caeb1e144799a504eeca834549865b7098b16ab47b3dc9c14",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": "spring",
+      "branch_seed": 1,
+      "bytes": 3476129,
+      "id": "j1j2/no_symmetry/branch1800/seed1/spring_final",
+      "original_sha256": "adc6ddabb46e8c0c9315879197e7706fe3bc8e56f4205c66dc7f084ce69ac225",
+      "path": "checkpoints/j1j2_no_symmetry_branch1800_seed1_spring_final.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_001800"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 500,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "final_endpoint",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 500,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "a3ae183fcdd2b806dcbc30ed8e6a8835615b10c11200cf4c6d64b69e2fed8412",
+      "status": "sanitized",
+      "url": null
+    },
+    {
+      "arm": "ms_sr",
+      "branch_seed": 1,
+      "bytes": 3477593,
+      "id": "j1j2/no_symmetry/branch1800/seed1/ms_sr_final",
+      "original_sha256": "43296f4261a95d4c3290d9c1c5e41bcc98c1f8c1fb7f0009267dfb05cdd68c48",
+      "path": "checkpoints/j1j2_no_symmetry_branch1800_seed1_ms_sr_final.pkl",
+      "path_metadata_replacements": [
+        {
+          "field": "config.init_from",
+          "replacement": "artifact://j1j2/no_symmetry/source_step_001800"
+        }
+      ],
+      "pickle_roundtrip_verification": {
+        "checkpoint_step": 125,
+        "parameter_array_count": 112,
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "role": "final_endpoint",
+      "runtime_reconstruction_verification": {
+        "checkpoint_step": 125,
+        "driver_type": "VMC_NG",
+        "status": "passed",
+        "system": "j1j2"
+      },
+      "sanitized_sha256": "7e8cdfb5188a30a508e7d7d714a659f86fa55b3d5137829527420e850be7ccdf",
+      "status": "sanitized",
+      "url": null
+    }
+  ],
+  "remote": {
+    "repo_id": null,
+    "repo_type": "dataset",
+    "revision": null
+  },
+  "schema": "sr_filter.external_checkpoint_manifest.v1",
+  "schema_version": 1,
+  "security": {
+    "consumer_requirement": "verify sanitized_sha256 before loading; pickle remains unsafe for untrusted content",
+    "input_trust": "trusted local pickle inputs only",
+    "originals_modified": false
+  },
+  "status": "ready_for_authenticated_upload"
+}

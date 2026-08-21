@@ -1,0 +1,18 @@
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Branch & Source step & Updates (SR / SPRING / MS-SR)
+  & Endpoint samples (SR / SPRING / MS-SR) \\
+\midrule
+seed 0 & 2500 & 500 / 500 / 125 & 8,388,608 / 8,388,608 / 8,388,608 \\
+seed 1 & 1800 & 500 / 500 / 125 & 8,388,608 / 8,388,608 / 8,388,608 \\
+\bottomrule
+\end{tabular}
+\caption{Online-branch accounting from the audited artifacts. Each optimizer
+receives 500 budget units; all candidate batches contain 8192 samples.}
+\label{tab:online_protocol}
+\end{table}
+
+Each endpoint replica uses 512 evaluation rounds, 5 burn-in rounds, and 8,192 samples per round. Endpoint evaluation seeds (SR / SPRING / MS-SR) are seed 0: 12345/98765 / 12345/98765 / 12345/98765; seed 1: 12345/98765 / 12345/98765 / 12345/98765.

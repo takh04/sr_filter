@@ -1,0 +1,28 @@
+schema = "sr_filter.hf_dataset_staging_config.v1"
+repo_id = "takh04/sr-filter-artifacts"
+repo_type = "dataset"
+license = "apache-2.0"
+code_revision_placeholder = "PENDING_GIT_COMMIT_SHA"
+data_revision_placeholder = "PENDING_HF_COMMIT_SHA"
+
+[inputs]
+external_checkpoint_manifest = "artifacts/external_checkpoints.json"
+online_artifact_root = "artifacts/online_training"
+wall_clock_artifact_root = "artifacts/wall_clock"
+
+[endpoint_contract]
+schema = "sr_filter.endpoint_eval.v1"
+branches = [0, 1]
+arms = ["sr", "spring", "ms_sr"]
+replicas = [1, 2]
+rounds = 512
+burn_in_rounds = 5
+samples_per_round = 8192
+sampler_reset_count = 1
+sampler_progression = "single_seed_sequential_rounds"
+max_replica_difference_z = 5.0
+
+[dataset]
+manifest_path = "manifest.json"
+card_path = "README.md"
+release_metadata_path = "release.json"

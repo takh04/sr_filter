@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "artifact_root": "../artifacts/online_training",
+  "required_branches": [
+    {
+      "id": "branch_seed0",
+      "directory": "branch_seed0",
+      "expected_seed": 0,
+      "expected_source_step": 2500,
+      "expected_experiment_id": "online.j1j2.no_symmetry.branch2500.seed0.v1",
+      "expected_shared_sr_rows": 550,
+      "expected_endpoint_steps": {"sr": 550, "spring": 500, "ms_sr": 125}
+    },
+    {
+      "id": "branch_seed1",
+      "directory": "branch_seed1",
+      "expected_seed": 1,
+      "expected_source_step": 1800,
+      "expected_experiment_id": "online.j1j2.no_symmetry.branch1800.seed1.v1",
+      "expected_shared_sr_rows": 1,
+      "expected_endpoint_steps": {"sr": 500, "spring": 500, "ms_sr": 125}
+    }
+  ],
+  "training_curve_file": "training_curve.csv",
+  "endpoint_file": "endpoint_evaluations.csv",
+  "status_file": "status.json",
+  "provenance_file": "provenance.json",
+  "required_arms": ["shared_sr", "sr", "spring", "ms_sr"],
+  "branch_budget_units": 500,
+  "samples_per_batch": 8192,
+  "endpoint_runs_per_arm": 2,
+  "endpoint_eval_seeds": [12345, 98765],
+  "endpoint_rounds_per_run": 512,
+  "endpoint_burn_in_rounds": 5,
+  "endpoint_samples_per_run": 4194304
+}

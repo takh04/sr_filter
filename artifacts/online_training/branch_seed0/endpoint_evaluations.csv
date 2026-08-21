@@ -1,0 +1,7 @@
+experiment_id,run_status,system,branch_rng_seed,arm,checkpoint_step,eval_run,eval_seed,rounds,burn_in_rounds,samples_per_round,total_samples,energy_per_site,sigma_per_site,sigma_round_level_per_site,sigma_block8_level_per_site,audit_status
+online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,sr,550,1,12345,512,5,8192,4194304,-1.9944402854265078,9.39135753489835e-06,9.39135753489835e-06,8.921955430079335e-06,audited_complete
+online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,sr,550,2,98765,512,5,8192,4194304,-1.994459363520903,9.99033416232156e-06,9.972264016667661e-06,9.99033416232156e-06,audited_complete
+online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,spring,500,1,12345,512,5,8192,4194304,-1.993904750999135,1.089886158250521e-05,1.0761762102004592e-05,1.089886158250521e-05,audited_complete
+online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,spring,500,2,98765,512,5,8192,4194304,-1.9939213131753122,1.2682786346897048e-05,1.0782006904129942e-05,1.2682786346897048e-05,audited_complete
+online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,ms_sr,125,1,12345,512,5,8192,4194304,-1.994440779799416,9.340458051771202e-06,9.340458051771202e-06,8.456964574388997e-06,audited_complete
+online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,ms_sr,125,2,98765,512,5,8192,4194304,-1.9944321897498878,1.0585185290770255e-05,1.0585185290770255e-05,1.0554217590976376e-05,audited_complete

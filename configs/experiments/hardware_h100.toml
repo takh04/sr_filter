@@ -1,0 +1,17 @@
+schema = "sr_filter.hardware_protocol.v1"
+hardware_id = "local_8xh100_80gb"
+status = "observed"
+gpu_model = "NVIDIA H100 80GB HBM3"
+gpu_count = 8
+memory_mib_per_gpu = 81559
+driver_version = "595.71.05"
+training_gpus_per_arm = 4
+endpoint_gpus_per_run = 1
+inspection_command = "nvidia-smi --query-gpu=index,name,memory.total,driver_version --format=csv"
+
+[runtime_estimates]
+sr_seconds_per_update = 48.3
+ms_sr_seconds_per_update = 101.0
+spring_seconds_per_update = 25.3
+endpoint_512_round_minutes = 62
+note = "Planning estimates from observed local prefixes; MS-SR uses corrected real probability weights and post-compile updates 3 onward. Not benchmark claims."

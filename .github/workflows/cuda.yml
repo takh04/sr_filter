@@ -1,0 +1,49 @@
+name: CUDA smoke test
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: cuda-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  cuda-smoke:
+    # Register a trusted runner with all four labels before dispatching.
+    runs-on: [self-hosted, linux, x64, gpu, cuda12]
+    timeout-minutes: 45
+    env:
+      JAX_PLATFORMS: cuda
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen --extra dev --extra cuda12
+      - name: Require a working JAX CUDA device
+        run: |
+          uv run python - <<'PY'
+          import jax
+          import jax.numpy as jnp
+
+          devices = jax.devices()
+          print(devices)
+          if not any(device.platform == "gpu" for device in devices):
+              raise SystemExit("No JAX GPU device is available")
+          result = jnp.arange(8, dtype=jnp.float32).sum()
+          result.block_until_ready()
+          if float(result) != 28.0:
+              raise SystemExit(f"Unexpected CUDA smoke-test result: {result}")
+          PY
+      - run: uv run sr-filter --help
+      - run: uv run pytest
