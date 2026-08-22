@@ -79,7 +79,8 @@ resources, and the figure-to-artifact map.
   internal and carry upstream provenance in `THIRD_PARTY_NOTICES.md`.
 - `configs/`: portable online, diagnostic, endpoint, and timing configurations.
 - `artifacts/`: compact sanitized data, manifests, and publication figures.
-- `paper/`: camera-ready manuscript source and reproducible build checks.
+- `paper/`: camera-ready manuscript source, the built
+  [`main.pdf`](paper/main.pdf), and reproducible build checks.
 - `tests/`: CPU unit, schema, plotting, and package-install tests.
 
 ## Reproducibility boundaries
