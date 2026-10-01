@@ -6,7 +6,9 @@ recursive-include artifacts/paper *.csv *.json *.npz *.md
 include paper/Makefile paper/README.md paper/main.pdf
 recursive-include paper *.tex *.bib *.sty
 recursive-include paper/figures *.pdf
+recursive-include paper/arxiv *.pdf *.json *.md
 recursive-include paper/scripts *.py
 include scripts/audit_release.py scripts/import_paper_archive.py
 prune paper/build
+prune paper/arxiv/build
 prune outputs

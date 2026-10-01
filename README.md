@@ -3,8 +3,13 @@
 Code and compact results for **Stochastic Reconfiguration as Statistical Filtering
 for Overparameterized Neural Quantum States**, by Tak Hur.
 
-[Read the paper](paper/main.pdf) · [Experiment guide](docs/reproducibility.md) ·
+[arXiv paper](paper/arxiv/2609.23334v1.pdf) · [NeurIPS version](paper/main.pdf) ·
+[Experiment guide](docs/reproducibility.md) ·
 [Data inventory](docs/artifacts.md)
+
+Both manuscript versions use the text and figures submitted as
+[arXiv:2609.23334v1](https://arxiv.org/abs/2609.23334).
+The [submitted sources](paper/arxiv/README.md) are preserved with checksums.
 
 The repository contains the paper experiments: exact small-system regression
 diagnostics, TFIM checkpoint diagnostics, MS-SR ablations, and the J1–J2 online
@@ -65,7 +70,9 @@ Install Tectonic, or latexmk with a TeX Live installation, then run:
 make -C paper camera-ready
 ```
 
-To refresh every manuscript figure first, run `make -C paper figures`.
+`make -C paper sync` restores the NeurIPS manuscript from the submitted arXiv
+sources. `make -C paper reproduce` generates numerical reproductions under
+`outputs/figures/`, preserving the original submitted figure assets.
 
 ## Check the code and data
 

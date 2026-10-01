@@ -1,5 +1,6 @@
 # The artifact manifest hashes exact bytes, including legacy CSV line endings.
 artifacts/paper/** -text
+paper/arxiv/** -text whitespace=-blank-at-eol
 *.csv whitespace=cr-at-eol
 *.npz binary
 *.pdf binary
