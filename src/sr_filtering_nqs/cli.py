@@ -234,7 +234,7 @@ def build_parser() -> argparse.ArgumentParser:
     artifact = commands.add_parser("artifact", help="Manage checksum-verified experiment artifacts")
     artifact_actions = artifact.add_subparsers(dest="artifact_action", required=True)
     fetch = artifact_actions.add_parser("fetch", help="Fetch and verify files from a public manifest")
-    fetch.add_argument("--manifest", default="artifacts/manifest.json")
+    fetch.add_argument("--manifest", default="artifacts/paper/manifest.json")
     fetch.add_argument("--output-root", type=Path, default=Path("outputs"))
     fetch.add_argument("--source-root", type=Path, default=None)
     fetch.add_argument("--experiment", action="append", default=[])
@@ -261,7 +261,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("outputs"),
         help="Explicit destination for generated caches/results (default: ./outputs)",
     )
-    fixed.add_argument("--system", choices=("all", "j1j2", "tfim", "ssm"), default="all")
+    fixed.add_argument("--system", choices=("all", "j1j2", "tfim"), default="all")
     fixed.add_argument("--source-train-lambda", type=float, default=1e-4)
     fixed.add_argument("--source-steps", default="all")
     fixed.add_argument("--latest-only", action="store_true")
@@ -315,7 +315,7 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.set_defaults(handler=_benchmark)
 
     reproduce_parser = commands.add_parser("reproduce", help="Regenerate figures from compact artifacts")
-    reproduce_parser.add_argument("--recipe", choices=("all", "curated", "online"), default="all")
+    reproduce_parser.add_argument("--recipe", choices=("paper", "all", "curated", "online"), default="paper")
     reproduce_parser.add_argument("--input-root", type=Path, default=Path("."))
     reproduce_parser.add_argument("--output-dir", type=Path, default=Path("outputs/reproduced"))
     reproduce_parser.set_defaults(handler=_reproduce)

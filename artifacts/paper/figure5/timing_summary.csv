@@ -1,0 +1,4 @@
+method,sampled_batches,sr_solves,median_seconds,relative_to_sr,paired_device_seed_settings
+SR,1,1,13.3835769,1.0,3
+Bagged SR,4,4,53.5488473,4.001086383715553,3
+MS-SR,4,4,54.0858135,4.041207661010264,3

@@ -1,109 +1,80 @@
-# SR Filtering for Neural Quantum States
+# SR Filter
 
-Reference implementation and reproducibility package for **“Stochastic
-Reconfiguration as Statistical Filtering for Overparameterized Neural Quantum
-States.”**
+Code and compact results for **Stochastic Reconfiguration as Statistical Filtering
+for Overparameterized Neural Quantum States**, by Tak Hur.
 
-The project studies stochastic reconfiguration (SR) through the lens of
-statistical filtering and includes the checkpoint-local diagnostics,
-multi-shift SR (MS-SR), online SR/SPRING/MS-SR comparisons, robustness
-ablations, and wall-clock measurements used in the paper.
+[Read the paper](paper/main.pdf) · [Experiment guide](docs/reproducibility.md) ·
+[Data inventory](docs/artifacts.md)
+
+The repository contains the paper experiments: exact small-system regression
+diagnostics, TFIM checkpoint diagnostics, MS-SR ablations, and the J1–J2 online
+SR/MS-SR comparison. It also includes the optimized SR, bagged-SR, and MS-SR timing
+implementation and the appendix's exact population-reference tracking code.
+The numerical code uses JAX and NetKet.
 
 ## Install
 
-The reference environment uses Python 3.12, JAX 0.7.2, and NetKet 3.21.0.
-Python 3.11 and 3.12 are tested. The default install is CPU-compatible:
+Use Python 3.11 or 3.12. From the repository root:
 
 ```bash
-git clone https://github.com/takh04/sr_filter.git
-cd sr_filter
 uv sync --frozen --extra dev
 uv run sr-filter --help
-uv run pytest
 ```
 
-For NVIDIA CUDA 12 systems:
+The default environment supports CPU plotting and tests. For CUDA 12 experiments
+on Linux, use `uv sync --frozen --extra dev --extra cuda12`.
+
+## Reproduce the figures
+
+All five main-text figures can be regenerated from the bundled CSV, JSON, and
+NumPy arrays without checkpoints or external downloads:
 
 ```bash
-uv sync --frozen --extra dev --extra cuda12
-uv run python -c "import jax; print(jax.devices())"
+uv run sr-filter reproduce --input-root . --output-dir outputs/figures
 ```
 
-CUDA drivers and libraries are host requirements and are not installed by
-this repository. The large online runs were measured on NVIDIA H100 80 GB
-GPUs; CPU installation is intended for tests, artifact inspection, and figure
-regeneration.
+Use `--recipe all` to also regenerate both appendix figures.
 
-## Reproduce the paper artifacts
+| Paper figure | Included data | Experiment implementation |
+| --- | --- | --- |
+| 1: parameter-to-sample ratios | Literature points and source notes | `literature_ratio.py` |
+| 2: small-system diagnostics | Matched-noise and matched-state diagnostic arrays | `small_scale/`, `matched_state/` |
+| 3: TFIM shift sweep | Checkpoint-level residuals and variances | `large_scale/core/fixed_data_protocol.py` |
+| 4: MS-SR ablations | Checkpoint summaries and bagged-shift sweep | `fixed_data_protocol.py`, `bagged_lambda_protocol.py` |
+| 5: online training and cost | Five J1–J2 training pairs, endpoint estimates, TFIM timing summaries | `large_scale/cli/train_sweep.py`, `large_scale/core/optimized_sr_benchmark.py` |
 
-Compact, path-free inputs needed for plotting are versioned in `artifacts/`.
-Most are CSV/JSON; two legacy small-scale inputs use Python pickle and are
-called out in [`docs/artifacts.md`](docs/artifacts.md). Generated files default
-to `./outputs` so an installed wheel never writes into site-packages.
+Implementation paths in this table are relative to `src/sr_filtering_nqs/`.
+The [experiment guide](docs/reproducibility.md) maps the paper protocols to the
+training and diagnostic commands. Running new training or checkpoint diagnostics
+requires the corresponding model states and substantially more compute than
+plotting the bundled results.
+
+The repository preserves the available results used by the paper, including
+appendix robustness diagnostics, raw timing records, and online-tracking
+trajectories. [Archive coverage and known gaps](docs/archive-coverage.md) maps
+them to the manuscript. The tracking source archive has missing, incomplete,
+and conflicting records; all 96 published figure points are retained, and 81
+can be independently recovered from the available trajectories. Model weights
+and raw sample banks are outside this results bundle.
+
+## Build the manuscript
+
+Install Tectonic, or latexmk with a TeX Live installation, then run:
 
 ```bash
-uv run sr-filter reproduce --recipe curated --input-root . --output-dir outputs/figures
+make -C paper camera-ready
 ```
 
-`--recipe online` regenerates the equal-budget comparison only after both
-audited branch bundles are present; `--recipe all` requires both compact and
-online inputs.
+To refresh every manuscript figure first, run `make -C paper figures`.
 
-Online fixed-grid MS-SR uses the explicit trainer option
-`--sr-update-protocol fixed_grid_exact_loo`; the frozen commands and exact
-four-batch/four-solve budget are documented in
-[`docs/reproducibility.md`](docs/reproducibility.md).
-
-The checked-in compact artifact bundle is self-contained. Large checkpoints
-and raw per-round records are intended for the companion Hugging Face dataset
-[`takh04/sr-filter-artifacts`](https://huggingface.co/datasets/takh04/sr-filter-artifacts)
-and are not stored in Git. Before a release advertises those files, the
-dataset must be public and its immutable revision, byte counts, and SHA-256
-digests must be added to the checked-in manifest. Fetch only manifest-listed
-files:
+## Check the code and data
 
 ```bash
-uv run sr-filter artifact fetch --output-root outputs/artifacts
+JAX_PLATFORMS=cpu uv run pytest
+uv run python scripts/audit_release.py
+uv build
 ```
 
-Exact experiment configurations are under `configs/`. GPU jobs write to an
-explicit output directory and never depend on dated cluster paths. See
-[`docs/reproducibility.md`](docs/reproducibility.md) for commands, expected
-resources, and the figure-to-artifact map.
-
-## Repository layout
-
-- `src/sr_filtering_nqs/`: maintained package and command-line interfaces.
-- `src/{advanced_drivers,netket_foundational,nqs_nets,nqs_support_core,spin_vmc}/`:
-  bundled support code required by the experiments; these namespaces are
-  internal and carry upstream provenance in `THIRD_PARTY_NOTICES.md`.
-- `configs/`: portable online, diagnostic, endpoint, and timing configurations.
-- `artifacts/`: compact sanitized data, manifests, and publication figures.
-- `paper/`: camera-ready manuscript source, the built
-  [`main.pdf`](paper/main.pdf), and reproducible build checks.
-- `tests/`: CPU unit, schema, plotting, and package-install tests.
-
-## Reproducibility boundaries
-
-Completed, auditable camera-ready experiments are included. Interrupted
-sweeps, debug launchers, machine-local logs, and an incomplete exploratory
-sweep are intentionally excluded and recorded in the provenance manifest.
-Online comparisons are controlled continuations from two checkpoints, not a
-broad population-level ranking of optimizers.
-
-Some archived research checkpoints use Python pickle. **Never load an
-untrusted pickle.** The artifact fetch command accepts only manifest-listed
-files, checks their digest, and never deserializes them. Commands that accept
-a checkpoint or `.pkl` path treat it as trusted input and may deserialize it
-without another prompt. A matching digest proves file identity, not safety.
-
-## Citation and license
-
-Please cite the paper using [`CITATION.cff`](CITATION.cff). Original project
-code and released artifacts are licensed under Apache-2.0 unless a file or
-third-party notice states otherwise. See [`LICENSE`](LICENSE) and
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
-
-Security and disclosure guidance is in [`SECURITY.md`](SECURITY.md).
-Maintainer publication gates are listed in
-[`docs/release-checklist.md`](docs/release-checklist.md).
+See [CITATION.cff](CITATION.cff) for citation metadata. Code is licensed under
+[Apache-2.0](LICENSE); bundled support-code attribution is in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

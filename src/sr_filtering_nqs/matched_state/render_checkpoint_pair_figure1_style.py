@@ -17,7 +17,8 @@ from sr_filtering_nqs.small_scale.common import (
     compute_exact_regression_diagnostics,
     load_pickle,
     make_model,
-    make_square_j1j2,
+    j1j2_bond_convention_from_metadata,
+    make_square_j1j2_from_metadata,
     now,
     precompute_centered_feature_matrix,
     run_trials_for_checkpoint,
@@ -32,16 +33,8 @@ from sr_filtering_nqs.matched_state.common import (
 )
 
 
-DEFAULT_RBM_CHECKPOINT = (
-    FIGURE2_DIR
-    / "checkpoints_pairmax_until_0p99_from_900459"
-    / "alternating_stage23_rbm_a2_to_vit_d2_m24_h4_e4_best.pkl"
-)
-DEFAULT_VIT_CHECKPOINT = (
-    FIGURE2_DIR / "checkpoints" / "fullsum_exact_until_0p99_from_913152_best.pkl"
-)
-DEFAULT_OUTPUT = Path("outputs/matched_state/best_fidelity_pair_figure1_style.pkl")
-DEFAULT_FIGURE_DIR = Path("outputs/matched_state/figures_best_fidelity_pair")
+DEFAULT_OUTPUT = Path("outputs/matched_state/checkpoint_pair_diagnostic.pkl")
+DEFAULT_FIGURE_DIR = Path("outputs/matched_state/figures")
 
 
 def parse_args() -> argparse.Namespace:
@@ -54,13 +47,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--rbm-checkpoint",
         type=str,
-        default=str(DEFAULT_RBM_CHECKPOINT),
+        required=True,
         help="Saved RBM checkpoint payload.",
     )
     parser.add_argument(
         "--vit-checkpoint",
         type=str,
-        default=str(DEFAULT_VIT_CHECKPOINT),
+        required=True,
         help="Saved ViT checkpoint payload.",
     )
     parser.add_argument("--ns", type=int, default=4096, help="Born-resampled training size.")
@@ -98,6 +91,12 @@ def parse_args() -> argparse.Namespace:
 def validate_same_system(rbm_payload: dict[str, Any], vit_payload: dict[str, Any]) -> dict[str, Any]:
     rbm_system = dict(rbm_payload["system"])
     vit_system = dict(vit_payload["system"])
+    rbm_convention = j1j2_bond_convention_from_metadata(rbm_system)
+    vit_convention = j1j2_bond_convention_from_metadata(vit_system)
+    if rbm_convention != vit_convention:
+        raise ValueError(
+            f"Checkpoint bond convention mismatch: {rbm_convention} != {vit_convention}"
+        )
     for key in ("name", "L", "J1", "J2"):
         if rbm_system.get(key) != vit_system.get(key):
             raise ValueError(
@@ -211,11 +210,7 @@ def main() -> None:
     vit_payload["checkpoint_path"] = str(vit_checkpoint)
     system = validate_same_system(rbm_payload, vit_payload)
 
-    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(
-        L=int(system["L"]),
-        J1=float(system["J1"]),
-        J2=float(system["J2"]),
-    )
+    hilbert, hamiltonian, graph, system_meta = make_square_j1j2_from_metadata(system)
     all_states = np.asarray(hilbert.all_states())
     square_L = int(system["L"])
     j_couplings = (float(system["J1"]), float(system["J2"]))

@@ -12,7 +12,7 @@ import sr_filtering_nqs.large_scale.core.fixed_data_protocol as fixed
 from sr_filtering_nqs.cli import build_parser
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL_PATH = ROOT / "configs" / "experiments" / "robustness_checkpoint_local.toml"
+PROTOCOL_PATH = ROOT / "configs" / "paper_fixed_data.toml"
 SHELL_REQUIRED_VAR = re.compile(r"\$\{([A-Z0-9_]+):\?[^}]+\}")
 
 
@@ -36,7 +36,7 @@ def _option(argv: list[str], name: str) -> str:
     return argv[argv.index(name) + 1]
 
 
-def test_every_frozen_consumer_names_its_matching_figure2_workspace():
+def test_every_paper_consumer_names_its_matching_figure2_workspace():
     parsed = []
     for run in _runs().values():
         argv = _argv(run["command"])
@@ -67,8 +67,8 @@ def test_every_frozen_consumer_names_its_matching_figure2_workspace():
         assert _option(argv, "--output-dir") != producers[key], run_id
 
 
-def test_frozen_tfim_figure2_figure3_bagged_command_flow(tmp_path, monkeypatch):
-    """Dispatch the frozen CLI commands through their real protocol runners."""
+def test_paper_tfim_figure2_figure3_bagged_command_flow(tmp_path, monkeypatch):
+    """Dispatch the paper CLI commands through their real protocol runners."""
 
     runs = _runs()
     variables = {

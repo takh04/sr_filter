@@ -10,7 +10,7 @@ WARMUP_STEPS = 100
 DEFAULT_SR_LAMBDA_GRID = (1e-3, 1e-4, 1e-5, 1e-6, 1e-7)
 SR_VARIANTS = ("single", "same_batch", "indep_batch")
 SR_WEIGHT_SCHEMES = ("uniform", "gcv", "stacking")
-NGD_METHODS = ("sr", "spring", "pii", "rgn")
+NGD_METHODS = ("sr", "spring")
 LAMBDA_GRID = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
 TFIM_LAMBDA_GRID = [
     1e-8,
@@ -67,21 +67,14 @@ PHASE0_CHECKPOINT_STEPS = (PHASE_LENGTHS[0],)
 J1J2_DIAGNOSTIC_STEPS = tuple(step for step in CHECKPOINT_STEPS if step > PHASE_LENGTHS[0])
 
 SYSTEM_ORDER = ("j1j2", "tfim")
-ACTIVE_SYSTEM_CHOICES = ("j1j2", "tfim", "ising", "ising1d", "tfim_fnqs", "ssm", "shastry")
+ACTIVE_SYSTEM_CHOICES = ("j1j2", "tfim", "ising", "ising1d", "tfim_fnqs")
 SYSTEM_TITLES = {
     "j1j2": r"$J_1$-$J_2$ (8$\times$8, $J_2/J_1 = 0.5$)",
     "tfim": r"1D TFIM FNQS ($L=100$, $h \in [0.8, 1.2]$)",
-    "ssm": r"Shastry-Sutherland (8$\times$8, $J'/J = 0.8$)",
 }
 SYSTEM_MODEL_TYPES = {
     "j1j2": "vit",
     "tfim": "fnqs",
-    "ssm": "vit",
-}
-PII_E0_ESTIMATES_PER_SITE = {
-    "j1j2": -1.995843,
-    "ssm": -2.386983,
-    "tfim": -1.280757,
 }
 SYSTEM_PHASES = {
     "j1j2": (
@@ -92,11 +85,6 @@ SYSTEM_PHASES = {
     "tfim": (
         {"phase_index": 0, "symmetry_index": 0, "name": "fnqs", "length": 2000},
     ),
-    "ssm": (
-        {"phase_index": 0, "symmetry_index": 0, "name": "identity", "length": PHASE_LENGTHS[0]},
-        {"phase_index": 1, "symmetry_index": 1, "name": "c4", "length": PHASE_LENGTHS[1]},
-        {"phase_index": 2, "symmetry_index": 2, "name": "full_point_group", "length": PHASE_LENGTHS[2]},
-    ),
 }
 
 _SYSTEM_ALIASES = {
@@ -105,9 +93,6 @@ _SYSTEM_ALIASES = {
     "ising": "tfim",
     "ising1d": "tfim",
     "tfim_fnqs": "tfim",
-    "ssm": "ssm",
-    "shastry": "ssm",
-    "shastry-sutherland": "ssm",
 }
 
 
@@ -118,25 +103,8 @@ def normalize_system_name(name):
     return _SYSTEM_ALIASES[key]
 
 
-def default_pii_tau(name, n_sites: int, *, scale: float = 1.01) -> float:
-    """Default projected inverse-iteration shift for arXiv:2507.10835-style PII.
-
-    The paper uses a shift below the ground-state energy. These experiments
-    estimate that as ``scale * E0_est_per_site * n_sites``; with negative
-    energies, ``scale=1.01`` places the shift slightly below the estimate.
-    Callers can override this deterministic default with the explicit
-    ``--pii-tau`` training option.
-    """
-    normalized = normalize_system_name(name)
-    if normalized not in PII_E0_ESTIMATES_PER_SITE:
-        raise ValueError(f"No PII ground-state estimate registered for system={name!r}")
-    return float(scale) * float(PII_E0_ESTIMATES_PER_SITE[normalized]) * int(n_sites)
-
-
 def legacy_system_names(name):
     normalized = normalize_system_name(name)
-    if normalized == "ssm":
-        return ("ssm", "shastry")
     return (normalized,)
 
 
@@ -191,7 +159,7 @@ def default_delta_bank_chunk_size_bwd(name, *, n_samples: int | None = None):
     if normalized == "tfim":
         return TFIM_DELTA_BANK_CHUNK_SIZE_BWD
 
-    if normalized not in ("j1j2", "ssm"):
+    if normalized != "j1j2":
         return None
 
     if n_samples is None:
@@ -242,7 +210,7 @@ def lambda_grid_tag(values) -> str:
 
 
 def make_system(name, L=LATTICE_SIZE):
-    from spin_vmc.system import ShastrySutherland, SquareHeisenberg
+    from spin_vmc.system import SquareHeisenberg
 
     normalized = normalize_system_name(name)
     if normalized == "j1j2":
@@ -252,8 +220,6 @@ def make_system(name, L=LATTICE_SIZE):
             sign_rule=[False, False],
             patching=True,
         )
-    if normalized == "ssm":
-        return ShastrySutherland(L=L, J=[1.0, 0.8])
     raise ValueError(f"Unknown system: {name}")
 
 
@@ -261,7 +227,6 @@ def _looks_like_large_scale_root(path: Path) -> bool:
     return (
         (path / "j1j2_results").exists()
         or (path / "tfim_results").exists()
-        or (path / "ssm_results").exists()
     )
 
 

@@ -1,0 +1,381 @@
+{
+  "schema_version": 1,
+  "scope": "Camera-ready main-text Figures 1\u20135 and appendix results",
+  "contains_checkpoints": false,
+  "external_downloads_required": false,
+  "figure_reproduction": "python -m sr_filtering_nqs.paper_figures --output-dir outputs/paper",
+  "figures": [
+    {
+      "id": "1",
+      "experiment": "Literature parameter-to-sample ratios",
+      "inputs": [
+        "figure1/literature_points.json",
+        "figure1/source_notes.json"
+      ],
+      "outputs": [
+        "p_over_ns_literature.pdf"
+      ]
+    },
+    {
+      "id": "2",
+      "experiment": "Exact amplitude-regression diagnostics",
+      "inputs": [
+        "figure2/amplitude_diagnostics.npz",
+        "figure2/metadata.json"
+      ],
+      "outputs": [
+        "figure2.pdf"
+      ]
+    },
+    {
+      "id": "3",
+      "experiment": "TFIM shared-checkpoint diagonal-shift diagnostics",
+      "inputs": [
+        "figure3/checkpoint_metrics.csv",
+        "figure3/residual_repeats.csv"
+      ],
+      "outputs": [
+        "figure3_tfim_fixed_data.pdf"
+      ]
+    },
+    {
+      "id": "4",
+      "experiment": "Corrected TFIM and J1-J2 seven-method ablation",
+      "inputs": [
+        "figure4/checkpoint_values.csv",
+        "figure4/full_sweep.csv",
+        "figure4/selected_shifts.csv",
+        "figure4/summary.csv"
+      ],
+      "outputs": [
+        "Figure4_linear.pdf"
+      ]
+    },
+    {
+      "id": "5",
+      "experiment": "Historical J1-J2 paired continuations and separate TFIM timing",
+      "inputs": [
+        "figure5/endpoint_pairs.csv",
+        "figure5/paired_timing.csv",
+        "figure5/protocol.json",
+        "figure5/timing_summary.csv",
+        "figure5/training_curves.csv"
+      ],
+      "outputs": [
+        "historical_online_cholesky.pdf",
+        "historical_online_endpoints.tex",
+        "figure5_timing.tex"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5706,
+      "sha256": "6c9720e7bf50ad6fd5d7a0df55daeb1771916dd5b86028e069771b21346ea818",
+      "figure": null
+    },
+    {
+      "path": "appendix/diagnostic_results.json",
+      "figure": null,
+      "bytes": 3768859,
+      "sha256": "521b8169c8d34f52e234ef247385d31a90ec7194f1f94a8a9f8c8b4ac6592496"
+    },
+    {
+      "path": "appendix/online_tracking/box_stats.csv",
+      "figure": null,
+      "bytes": 1176,
+      "sha256": "e88a6e7d034076106b73553ad730fba269010783795d13da42c03b92c8189c48"
+    },
+    {
+      "path": "appendix/online_tracking/exact_states/j1j2_L4_N16.npz",
+      "figure": null,
+      "bytes": 206438,
+      "sha256": "79f6c8023a01b19c3abc016ab8be41a90e6caa30ffafe7c9fffeb3d3901189d4"
+    },
+    {
+      "path": "appendix/online_tracking/exact_states/ssm_L4_N16.npz",
+      "figure": null,
+      "bytes": 206438,
+      "sha256": "1adab078a58b7633917c4e4ab637b69a49877e829f318b7d2a9a82993dc4494f"
+    },
+    {
+      "path": "appendix/online_tracking/exact_states/tfim2d_L4_N16_h1.npz",
+      "figure": null,
+      "bytes": 1049094,
+      "sha256": "5d3fdd15912c9c5b70465ec2f7276bebbc52f3e58a291620308b358e80533d14"
+    },
+    {
+      "path": "appendix/online_tracking/hamiltonian_audit.json",
+      "figure": null,
+      "bytes": 120911,
+      "sha256": "ca920bda3804e94bd1d851166c410cef4d7d1cd9a3cc68cd9901f8853c5a90c5"
+    },
+    {
+      "path": "appendix/online_tracking/plot_statistics.json",
+      "figure": null,
+      "bytes": 3721,
+      "sha256": "e17a182628014636332bab7317121a2102d2e164020a6d6706e5a0ca38bb0a25"
+    },
+    {
+      "path": "appendix/online_tracking/points.csv",
+      "figure": null,
+      "bytes": 15044,
+      "sha256": "1707e9a245c70203d3e0b598adb05cfb428278fadddc4444980d7bb456bfb20e"
+    },
+    {
+      "path": "appendix/online_tracking/reconstruction_audit.json",
+      "figure": null,
+      "bytes": 864,
+      "sha256": "5248b0993590a1b4be88e3a786946d6772451b4cda60a309c179e553b2c33c99"
+    },
+    {
+      "path": "appendix/online_tracking/runs.json",
+      "figure": null,
+      "bytes": 1241171,
+      "sha256": "a626c47ee6cca998c67201daf6866c20cfeab1fb34f012aa97f1f30f20272de0"
+    },
+    {
+      "path": "appendix/online_tracking/source_code.json",
+      "figure": null,
+      "bytes": 756,
+      "sha256": "feb14711d33559e396530c5355dfc11530aabf62864c37f6ed29e768d0ce82ee"
+    },
+    {
+      "path": "appendix/online_tracking/trajectories.csv",
+      "figure": null,
+      "bytes": 13752809,
+      "sha256": "7beb27576aaf7613bee98d088200bf55dd9aa7936d088ad0dd5dfec81184263b"
+    },
+    {
+      "path": "appendix/robustness/bagged_lambda_summary_tfim.csv",
+      "figure": null,
+      "bytes": 975,
+      "sha256": "975071ae71b7dd517597593aeb9f149677b4602887e41aac88614346283cafab"
+    },
+    {
+      "path": "appendix/robustness/k_quantile_ablation_summary.csv",
+      "figure": null,
+      "bytes": 3538,
+      "sha256": "e67aba005a17f563388e0f8f583b771cefff68ac2e9b9c658c7092ae5558fe2f"
+    },
+    {
+      "path": "appendix/robustness/lt_trees_summary.csv",
+      "figure": null,
+      "bytes": 334,
+      "sha256": "ce53e448c78e7b232bc1462cfafa383a9afb5be23742b98fca42449500f9283a"
+    },
+    {
+      "path": "appendix/robustness/sweep_summary.csv",
+      "figure": null,
+      "bytes": 2840,
+      "sha256": "fae025db1c6c5bec495ec4db3bc9d49e0623cb7f36f125270738a5d6decc7fe8"
+    },
+    {
+      "path": "archive_import.json",
+      "figure": null,
+      "bytes": 269649,
+      "sha256": "c8724ba7a561f35d0f1fb3d3bf6ce186bb1f1529a6e66897dc0fbc78b8dedfd1"
+    },
+    {
+      "path": "figure1/literature_points.json",
+      "bytes": 4108,
+      "sha256": "fa439328643468a797e3289ffcb50e17f976c8e346e71b79703f9ce1a54dbc54",
+      "figure": "1"
+    },
+    {
+      "path": "figure1/source_notes.json",
+      "bytes": 4809,
+      "sha256": "21b305375f01ddb578103c40544293540dd69563a26c976ae73a1ff36fd1833e",
+      "figure": "1"
+    },
+    {
+      "path": "figure2/amplitude_diagnostics.npz",
+      "bytes": 3398380,
+      "sha256": "5b53230a8a110330f02b4e227b9d4fd0428c9c5d6fdfea337b42a9b453198ad4",
+      "figure": "2"
+    },
+    {
+      "path": "figure2/metadata.json",
+      "bytes": 3792,
+      "sha256": "8cf6ae5321f884499bb4fbc0e187f609d61897cfedc2045cc2b67b8887dfe851",
+      "figure": "2"
+    },
+    {
+      "path": "figure3/checkpoint_metrics.csv",
+      "bytes": 5028,
+      "sha256": "1ba3932f713a54863e674d86121f786f6e602cff57321317953210f7c3c22703",
+      "figure": "3"
+    },
+    {
+      "path": "figure3/residual_repeats.csv",
+      "bytes": 56193,
+      "sha256": "e9f08c8d416b9ad4181279903276828f22fe9e5e28e725697723bf9cdf916a25",
+      "figure": "3"
+    },
+    {
+      "path": "figure4/checkpoint_values.csv",
+      "bytes": 16888,
+      "sha256": "d18fd8fe595401c9eebba064f36eb07e362ee186df838a2b7c3fdcad9ce4d3ec",
+      "figure": "4"
+    },
+    {
+      "path": "figure4/full_sweep.csv",
+      "bytes": 78329,
+      "sha256": "a6da01169972a884e29c39c4ac5a5335e17cc2f7785213a9b81206ba2072391c",
+      "figure": "4"
+    },
+    {
+      "path": "figure4/selected_shifts.csv",
+      "bytes": 2427,
+      "sha256": "92e5c797e9b4af44149b8477da79f348c34ba1976ef61e3eecc0028f23bfb061",
+      "figure": "4"
+    },
+    {
+      "path": "figure4/summary.csv",
+      "bytes": 2986,
+      "sha256": "31f4e2957a1ea75c1218a86cb87174e7bac48da6962b168611eff99e694779bb",
+      "figure": "4"
+    },
+    {
+      "path": "figure5/endpoint_pairs.csv",
+      "bytes": 814,
+      "sha256": "1fd7e38f57d31fe755d2fe8ca61d3b562e6e147a9c80fe70e8a93fe1086b0956",
+      "figure": "5"
+    },
+    {
+      "path": "figure5/original_source_records.json",
+      "figure": null,
+      "bytes": 2904,
+      "sha256": "48d620ecbf4c5ecf033bf839d0bd5ddbbefc11af5d5039e8956bcb4d0ab7124c"
+    },
+    {
+      "path": "figure5/paired_timing.csv",
+      "bytes": 343,
+      "sha256": "8b28ae4ca7a2740f4f6eac295b370d7cfa492e1d0c68e610fbf5b81743765a5b",
+      "figure": "5"
+    },
+    {
+      "path": "figure5/protocol.json",
+      "bytes": 1110,
+      "sha256": "957181b7c9f268cdd099088ebf39c1c1b4aca1d2a775fa58ba07b311686551e1",
+      "figure": "5"
+    },
+    {
+      "path": "figure5/timing_raw/pair1_bagged_sr_k4.json",
+      "figure": null,
+      "bytes": 7646,
+      "sha256": "813c7bdb92a71b802a49df6bad0cf4dd726de2151bd3eeb5d7ef99c352a8ea9f"
+    },
+    {
+      "path": "figure5/timing_raw/pair1_ms_sr_k4.json",
+      "figure": null,
+      "bytes": 8766,
+      "sha256": "0b06ffe94a3e8314bac7888f63019b4a69dc5cfb6673f75ea847d6f925415163"
+    },
+    {
+      "path": "figure5/timing_raw/pair1_sr.json",
+      "figure": null,
+      "bytes": 6609,
+      "sha256": "55ce2fae161323a98f04c925ce020f24fefffd275dc3c702a7031249fe0932f9"
+    },
+    {
+      "path": "figure5/timing_raw/pair2_bagged_sr_k4.json",
+      "figure": null,
+      "bytes": 7651,
+      "sha256": "c98e97d9466c578648f78784b4edd288d89ce5bb9524b4dcaefb4cf978d5f6e7"
+    },
+    {
+      "path": "figure5/timing_raw/pair2_ms_sr_k4.json",
+      "figure": null,
+      "bytes": 8764,
+      "sha256": "43372bd05d18ada7c9149b9f9ff27086dc1092c84c8fb696c6e719ef9aae2116"
+    },
+    {
+      "path": "figure5/timing_raw/pair2_sr.json",
+      "figure": null,
+      "bytes": 6614,
+      "sha256": "d6b250fbbe2e7b6083a7616bd9ddcd253b66375baa9e590f6f2bb22fc366c968"
+    },
+    {
+      "path": "figure5/timing_raw/pair3_bagged_sr_k4.json",
+      "figure": null,
+      "bytes": 7642,
+      "sha256": "5d82577301f8a5ecdf866e7718e52042968715a7902ea449873fa6d66f958e7c"
+    },
+    {
+      "path": "figure5/timing_raw/pair3_ms_sr_k4.json",
+      "figure": null,
+      "bytes": 8780,
+      "sha256": "ff3145be0fd1a43333a113464d5d52f16d149865a7d7fb29e120648b1aeff243"
+    },
+    {
+      "path": "figure5/timing_raw/pair3_sr.json",
+      "figure": null,
+      "bytes": 6614,
+      "sha256": "d79108f798c282300529acaf1497109dfd823efe17b4c83570762fc60ae6c941"
+    },
+    {
+      "path": "figure5/timing_summary.csv",
+      "bytes": 205,
+      "sha256": "2a2bebdddcb2248d77c2ca2c56e03e3afa4482e69c679132deb2fe64f5d5e4cb",
+      "figure": "5"
+    },
+    {
+      "path": "figure5/training_curves.csv",
+      "bytes": 115728,
+      "sha256": "4f1f347c67eeab5ff88e1644923905e653b960b28b10663ebd1a035977ac536c",
+      "figure": "5"
+    },
+    {
+      "path": "source_hashes.json",
+      "bytes": 18336,
+      "sha256": "7a508d934dc5c2c9347425eb6d05f8ebac2dd8b0182e52e0a60cd20318adf17f",
+      "figure": null
+    }
+  ],
+  "schema": "sr_filter.artifact_manifest.v1",
+  "experiments": {
+    "figure1": {
+      "description": "Literature parameter-to-sample ratios",
+      "primary_files": [
+        "figure1/literature_points.json",
+        "figure1/source_notes.json"
+      ]
+    },
+    "figure2": {
+      "description": "Exact amplitude-regression diagnostics",
+      "primary_files": [
+        "figure2/amplitude_diagnostics.npz",
+        "figure2/metadata.json"
+      ]
+    },
+    "figure3": {
+      "description": "TFIM shared-checkpoint diagonal-shift diagnostics",
+      "primary_files": [
+        "figure3/checkpoint_metrics.csv",
+        "figure3/residual_repeats.csv"
+      ]
+    },
+    "figure4": {
+      "description": "Corrected TFIM and J1-J2 seven-method ablation",
+      "primary_files": [
+        "figure4/checkpoint_values.csv",
+        "figure4/full_sweep.csv",
+        "figure4/selected_shifts.csv",
+        "figure4/summary.csv"
+      ]
+    },
+    "figure5": {
+      "description": "Historical J1-J2 paired continuations and separate TFIM timing",
+      "primary_files": [
+        "figure5/endpoint_pairs.csv",
+        "figure5/paired_timing.csv",
+        "figure5/protocol.json",
+        "figure5/timing_summary.csv",
+        "figure5/training_curves.csv"
+      ]
+    }
+  },
+  "appendix_reproduction": "python -m sr_filtering_nqs.appendix_figures"
+}

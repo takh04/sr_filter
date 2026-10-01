@@ -13,12 +13,6 @@ import numpy as np
 from sr_filtering_nqs.plot_metadata import pdf_metadata
 
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_MATCHED_NOISE = Path("artifacts/small_scale/matched_noise/rbm490_vit10.pkl")
-DEFAULT_MATCHED_STATE = (
-    Path("artifacts/small_scale/matched_state")
-    / "alternating_polish_vit_step0100_to_direct_rbm_a2_figure1_style.pkl"
-)
 DEFAULT_OUTPUT = Path("outputs/reproduced/figure2_four_panel.pdf")
 EXCESS_RISK_LABEL = r"$\|\hat{\delta}_{\lambda}-\delta^*\|_S^2$"
 DEFAULT_MAX_VAL_POINTS = 30_000
@@ -564,14 +558,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--matched-noise",
         type=Path,
-        default=DEFAULT_MATCHED_NOISE,
-        help=f"Matched-noise result pickle. Default: {DEFAULT_MATCHED_NOISE}",
+        required=True,
+        help="Trusted matched-noise diagnostic pickle.",
     )
     parser.add_argument(
         "--matched-state",
         type=Path,
-        default=DEFAULT_MATCHED_STATE,
-        help=f"Matched-state result pickle. Default: {DEFAULT_MATCHED_STATE}",
+        required=True,
+        help="Trusted matched-state diagnostic pickle.",
     )
     parser.add_argument(
         "--output",

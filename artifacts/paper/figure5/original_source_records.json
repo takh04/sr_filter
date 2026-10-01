@@ -1,0 +1,45 @@
+{
+  "inputs": [
+    {
+      "path": "sr-filter-prospective-seed-replication/source2500/branch_seed104/sr/large_scale/j1j2_results/1e-04/results/train_metrics.csv",
+      "sha256": "8c996bfaa8fa8f20ad7f2b1912f54367bc9a2cbd4787a34d2a57e495bfb73bf9"
+    },
+    {
+      "path": "sr-filter-historical-callback-replication/source2500/branch_seed104/historical_ms_sr/large_scale/j1j2_mixture_results/indep_batch__stacking__1e-02__1e-03__1e-04__1e-05/results/train_metrics.csv",
+      "sha256": "d0138e892737d917292ca9e7e856136b7429493b3d21a8dc39235ee6edf4bc88"
+    },
+    {
+      "path": "sr-filter-prospective-seed-replication/source2500/branch_seed105/sr/large_scale/j1j2_results/1e-04/results/train_metrics.csv",
+      "sha256": "267f3d28b7e70171303981347a8b026bf528f6945f633fa1f9b384a9372a9d3d"
+    },
+    {
+      "path": "sr-filter-historical-callback-replication/source2500/branch_seed105/historical_ms_sr/large_scale/j1j2_mixture_results/indep_batch__stacking__1e-02__1e-03__1e-04__1e-05/results/train_metrics.csv",
+      "sha256": "58e1bb0cd555c52b564fb06569f9091a5e26b35db7ec607e528e50578660246e"
+    },
+    {
+      "path": "sr-filter-prospective-seed-replication/source2500/branch_seed106/sr/large_scale/j1j2_results/1e-04/results/train_metrics.csv",
+      "sha256": "d1cd70cf1b26e9e0f49565a05783efcecc1819d805b2005e1b5bfcc7a7dcce47"
+    },
+    {
+      "path": "sr-filter-historical-callback-replication/source2500/branch_seed106/historical_ms_sr/large_scale/j1j2_mixture_results/indep_batch__stacking__1e-02__1e-03__1e-04__1e-05/results/train_metrics.csv",
+      "sha256": "d41f6e0c1d64e82451cdb01cb62c84daf67132fd3cfabfea788d9bdf7ac6fa8c"
+    },
+    {
+      "path": "sr-filter-prospective-seed-replication/source2500/branch_seed107/sr/large_scale/j1j2_results/1e-04/results/train_metrics.csv",
+      "sha256": "e24c50047093ad0194674697a99bc1ac4600737d6d98b32efee2505282c3fe89"
+    },
+    {
+      "path": "sr-filter-historical-callback-replication/source2500/branch_seed107/historical_ms_sr/large_scale/j1j2_mixture_results/indep_batch__stacking__1e-02__1e-03__1e-04__1e-05/results/train_metrics.csv",
+      "sha256": "1e7fa0078d3b29911444697e109eb686688d3bfe3a9a41d7e109a817e3d7c2c9"
+    },
+    {
+      "path": "sr-filter-prospective-seed-replication/source2500/branch_seed108/sr/large_scale/j1j2_results/1e-04/results/train_metrics.csv",
+      "sha256": "59a728f73b358e585b46fc21f15c179ab26cc7a5ede7b2e2b3b72416d8016a96"
+    },
+    {
+      "path": "sr-filter-historical-callback-replication/source2500/branch_seed108/historical_ms_sr/large_scale/j1j2_mixture_results/indep_batch__stacking__1e-02__1e-03__1e-04__1e-05/results/train_metrics.csv",
+      "sha256": "b3b17bbfc96c6726bad07ef7a0b1339ddf9a62dbb1d2c955f8eaf2d9c0892af2"
+    }
+  ],
+  "availability": "Original run directories are absent at their recorded paths. Training observations and endpoint estimates survive in the bundled tables."
+}

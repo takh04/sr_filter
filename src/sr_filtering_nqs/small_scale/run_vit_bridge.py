@@ -27,6 +27,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--L", type=int, default=4, help="Square lattice linear size.")
     parser.add_argument("--J1", type=float, default=1.0, help="Nearest-neighbor coupling.")
     parser.add_argument("--J2", type=float, default=0.5, help="Next-nearest-neighbor coupling.")
+    parser.add_argument("--j1j2-bonds", choices=("legacy_nnn_open_x", "periodic"),
+                        default="legacy_nnn_open_x", help="Diagonal-bond convention.")
     parser.add_argument(
         "--models",
         nargs="+",
@@ -111,7 +113,9 @@ def main() -> None:
         else np.logspace(args.lambda_min_exp, args.lambda_max_exp, args.n_lambdas)
     )
 
-    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(L=args.L, J1=args.J1, J2=args.J2)
+    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(
+        L=args.L, J1=args.J1, J2=args.J2, bond_convention=args.j1j2_bonds,
+    )
     output_path = (
         Path(args.output)
         if args.output

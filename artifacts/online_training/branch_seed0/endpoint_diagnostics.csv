@@ -1,2 +1,0 @@
-experiment_id,run_status,system,branch_rng_seed,arm,checkpoint_step,eval_run,eval_seed,rounds,burn_in_rounds,samples_per_round,total_samples,energy_per_site,sigma_per_site,sigma_round_level_per_site,sigma_block8_level_per_site,audit_status
-online.j1j2.no_symmetry.branch2500.seed0.v1,complete,j1j2,0,spring,500,0,12345,128,5,8192,1048576,-1.9939080491014511,2.745828608264687e-05,2.3462958910590648e-05,2.745828608264687e-05,audited_complete

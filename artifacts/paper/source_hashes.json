@@ -1,0 +1,460 @@
+{
+  "scope": "Source hashes identify archived inputs before conversion. Only compact selected records are distributed here; source files are not required to render the figures.",
+  "inputs": [
+    {
+      "figure": "1",
+      "source": "paper/plot_p_over_ns.py",
+      "sha256": "c6df5b4b3b99570ad969e6b2f61a5ef467ce6188936ef3b1ffa59be86963f792"
+    },
+    {
+      "figure": "1",
+      "source": "paper/literature.md",
+      "sha256": "9c40b1f3aa751f6b7efd261ff4bb379600cc963daf084a425d8e8b1fbee4b078"
+    },
+    {
+      "figure": "2",
+      "source": "artifacts/small_scale/matched_noise/rbm490_vit10.pkl",
+      "sha256": "d12fe7b802f67323c96b9d40f6e91fff4960785d2bb02a2a597ccf908ff5014e"
+    },
+    {
+      "figure": "2",
+      "source": "artifacts/small_scale/matched_state/alternating_polish_vit_step0100_to_direct_rbm_a2_figure1_style.pkl",
+      "sha256": "10e674e3db04ff9b60943b975af3c376794d6b67c7be1fd1f6af450dadc989d4"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-08.pkl",
+      "sha256": "b43e23bff580f6d0d329155d933903f0b585fdc3d4b7eb425ffcfd402e034e98"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-07.pkl",
+      "sha256": "9db70e17cef5b9dd3793898df48e9670663257969c172df0393e3dab125307a3"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-06.pkl",
+      "sha256": "7cb6a65bd99578135c1c00bacc1c85bae3ae0be296b1991dfb8a951672eeaf55"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-05.pkl",
+      "sha256": "2abf1a2ac7467a95111e6c4fbba23e4fe7c56cf3b4717162ade78cc0640c189c"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-04.pkl",
+      "sha256": "e131441cd41a2f2361173d61fea65ce247258ed27b0f0b7adf832449a40e04b2"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-03.pkl",
+      "sha256": "7253a72a5be070419e15bb48b3181273a0bb619e9d26a7c5861bb18b27deb780"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-02.pkl",
+      "sha256": "b6b7a97cd2d82dd71c7c978f7fdb4d96347235193507900e4e866a6fcce8a37a"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001100/diag_1e-01.pkl",
+      "sha256": "5fda33142a7eb895a141aecdd187c35c685d4071b1a8c195d6533e24f870f5fb"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-08.pkl",
+      "sha256": "de0c16aec4e706557cf48ddfe073900321255805514707f9a2fc85d442bb6857"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-07.pkl",
+      "sha256": "7bc64c4a8ea9c3f9e25ab625128d7d2c30a8d15ec15a8d5d606d8f965a639394"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-06.pkl",
+      "sha256": "c150db065761cef6cf0cf8caa6c425301cc769bc2a2fb14f478cfd85f1d32c98"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-05.pkl",
+      "sha256": "713dcc2d02415400d81f13d74c61aa7b811265ecf671bec0952f5e122eda4c5a"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-04.pkl",
+      "sha256": "ff68dd5dc1c3528b61641b764738c0819125b4a50519b537efbac6142593a390"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-03.pkl",
+      "sha256": "ec35ff9327713ad08d865fc8c41a3b79fbb48faae0aa9a43f4a8217c0cf70832"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-02.pkl",
+      "sha256": "24d32860e839589f60b082fb9afebf7b5aaa026622e004d30d990031dbb727dc"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001200/diag_1e-01.pkl",
+      "sha256": "abfd152f017c2c51ad62affc12b499998e31777110a0421929db732280be9ebe"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-08.pkl",
+      "sha256": "925ec7b581bc09808c6c54b96960245f71fa7264710344e4d3a0ae14b26849a9"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-07.pkl",
+      "sha256": "31be2d87371253ed813033f47dd1a2d0c78f851b61cab66639dc6425569bed84"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-06.pkl",
+      "sha256": "2e02bc5c92b78667b20e26e94b525efea78c877852a3c05fb4b7c159d44e2d5d"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-05.pkl",
+      "sha256": "05b86c5cd4ca4afd083bccd16bafbaa2c4867fd855b680ebd195a27d898baa4b"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-04.pkl",
+      "sha256": "d720648284325d8bc144c17ace04dae80ce0cc61cc7e4ccea6993b0f6ea121e0"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-03.pkl",
+      "sha256": "c93ca40eeea44ea32ab30045945d38af12f0c3078cbcc28c6f81d4873a78f716"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-02.pkl",
+      "sha256": "3319b6c114ed32302bfcc9c655624a6788ababea16c6f291e6c4d6c4fbeb535f"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001300/diag_1e-01.pkl",
+      "sha256": "b1f134980949001029416cd6c4c595ab88b3bd94f354c9ee0a9c593d3bd05ddc"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-08.pkl",
+      "sha256": "4c3221333db842bf3b9be9dd97564f7bab21230297186e828289eee798304ce9"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-07.pkl",
+      "sha256": "3f3a83ec09e39f93e3f435b2acdad9141810c2babeabf91435b8c4d3a0913cb7"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-06.pkl",
+      "sha256": "cc4728fbe6727ff113424bdeec0dde2544133b5b0678e1b2e9ea4ff3b8d85876"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-05.pkl",
+      "sha256": "45466b8bf86661833d6d95ea44aa27af0acb3d723f5fab02d89e08277f92bfed"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-04.pkl",
+      "sha256": "fe716e08281d67ec0dd05d016dd6876a97b9dc1a41c4801c685b71caded33e80"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-03.pkl",
+      "sha256": "6a63f827e8b202876c1d6c93e8983cd78468d283c93a022f5deaabab22ec5949"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-02.pkl",
+      "sha256": "af5d28f6104119d1a6bbe60ef5ce98e47c3d234d8ff1d91072f395fbaa10497c"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001400/diag_1e-01.pkl",
+      "sha256": "f37431e3d788503238fc33486fa610a2ffbe76e2d045dba93bdce14390e90727"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-08.pkl",
+      "sha256": "4439958d5663964321bee185728d6339e2302d962ca4a763c3dd62c5217418cb"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-07.pkl",
+      "sha256": "59d86fa2f051514ba7f86271e2e8d62bd18e53466a2f8b595c5fe166025925fa"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-06.pkl",
+      "sha256": "50abf6ce95ed7e5aa29e393e8c19aa329b93994a183c93279c851996b92883a9"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-05.pkl",
+      "sha256": "c59a151d4bf0d0881205c8f0d30e2ea9b23c2f87130ea4d4bb2a4d2ee350eaa9"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-04.pkl",
+      "sha256": "6d3210eae1e12a9ea59bb2fe7a1ad94b4ff2b591dc65e2fd1f7230abbc6ebc1d"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-03.pkl",
+      "sha256": "013f70c5e3b426bb1f2d04fecd7132aa6e5a6170a3f967857dbf5389b7c809b4"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-02.pkl",
+      "sha256": "936215842fcefa95fb2e782326b1cfa01b800aba03594d39aab814e2a7208be4"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001500/diag_1e-01.pkl",
+      "sha256": "917255241c85ad938f33b0785b120c1c3dd2378f5353406d51e56e4d733f716a"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-08.pkl",
+      "sha256": "1286bd3b717991aaa9161f29b7a0d22a8333864657ebfb62d22bc2ce11c45668"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-07.pkl",
+      "sha256": "f2bacae2066bc69c54e73bf3a42afae53349bf6c6f3c2a3859e099c6950d4bcf"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-06.pkl",
+      "sha256": "b9c8f557b2360df462b85f765c0872a66b9a934dfec8b9488eefe4ba0756d542"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-05.pkl",
+      "sha256": "c449186f1c52ddc22c096191a2935956f397a25f4c4e143826ba09ab36b342c9"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-04.pkl",
+      "sha256": "6ad61cd0a0e1ee396a39d074d43f8b57e3bd0b640e827e8cebe89f0075efa8e4"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-03.pkl",
+      "sha256": "d737165e73b19f71370c67ba3871e915fbfd4ea73b0efe35384ae2973dcc1ec9"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-02.pkl",
+      "sha256": "9efeb0c7ef80766924ca69d3ac36bb01f14f6af26b405855675f900b074611ff"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001600/diag_1e-01.pkl",
+      "sha256": "81a7f29cd14d669c091e9d307cc7952c42427afecfbdfa8802773ddeb827c3d4"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-08.pkl",
+      "sha256": "ccc8684f44f7a94a6628031dbd39023d075fd05c367256fbe7ae11f37b9b108f"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-07.pkl",
+      "sha256": "7b268e9840bc0011ad93451ee15ca98a6cdacbe4d62cfecc8b5a375e699d9613"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-06.pkl",
+      "sha256": "66cfddca78dc5dec0b36d547d5305246874411ebbdb0abf4715f8816a948eb66"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-05.pkl",
+      "sha256": "980021d64e35d7dee4f6cecdf82977566dc3ae9d7f6b7a370fc328fafa3e95ac"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-04.pkl",
+      "sha256": "8e6ad7f6ea1357e1d4379eb446ab9785c20e365439d42ed2a06556e0ccadb66b"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-03.pkl",
+      "sha256": "c14cafc741405aea81ef09d456c3c2bcc65cc152078b4058e876535b485a6497"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-02.pkl",
+      "sha256": "5f7e3928bc58d06d5009e42389bbab123ad4588162721da6784f5d5462962019"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001700/diag_1e-01.pkl",
+      "sha256": "bbeb8b996f47f12f85cd15ef59abd42072374552931112aa7eabd18c52839c9d"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-08.pkl",
+      "sha256": "7463b5073d7d02deaeff1eb7a3d25f834696b53e2a12379c13b214ebcba474fa"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-07.pkl",
+      "sha256": "428ec2b8d6f4d1a9e9b2b076242eceed31799aa7910e2353cc398f0036a78027"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-06.pkl",
+      "sha256": "efbbeecc0da6f444d0c55022683b20477f9de0e4f4fd33a3c44867a02ac08490"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-05.pkl",
+      "sha256": "1b545fb6e6340a2be5a5702c6c420e0a6428db78dfee9e02f2ac799990874002"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-04.pkl",
+      "sha256": "4a07ecfa6d3242cdba4312d1b73993e9527519833fabe189dcec2d75b137f303"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-03.pkl",
+      "sha256": "1df17067c8488050a7a35fc914f765e34d6cb4c70843b1437901812fd9986d91"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-02.pkl",
+      "sha256": "da230f6c6dd31675bf7d648684c3a73519782b00eb57592e26dc2de34bce6858"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001800/diag_1e-01.pkl",
+      "sha256": "20352a57047ba491b428c31fc5abd35321ad91271798ddbccc0b8184b1ed9866"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-08.pkl",
+      "sha256": "06432f407a94c705547414341351799bdc6c73b759ef03abbd28ad04b805e4e4"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-07.pkl",
+      "sha256": "31eec51eb6c42ace7e88cbcef448d2c020838f0bf775543c1672a71daa07eecf"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-06.pkl",
+      "sha256": "a95da21436f1048fb0d3f0d563702d07033487a0bf6c7b9fcbf76ccb2f4034b1"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-05.pkl",
+      "sha256": "933e3419c4d5be689ca5d7af60f2025f4e23c1de9df9354de13b511a2a288620"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-04.pkl",
+      "sha256": "b12bb3f0627e93b9fcd590ee98800f91a8c58006a1423c4f6e68f9dc2550fa15"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-03.pkl",
+      "sha256": "f32b7a07612d8e546f76e2a5219664f6b45ca21878662c8507e77937455176ab"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-02.pkl",
+      "sha256": "4ccc4c8eba6e514a92b2b6dfb904b51a36b68e9d7ddb3d2055c7e3c2a4e8ec2e"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step001900/diag_1e-01.pkl",
+      "sha256": "909a1712874ff92f48e0de1b61182cffc11d349eac7c887ee85fa7860fe6a497"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-08.pkl",
+      "sha256": "eda21c7f83ae96868ed076995c22c205d14cdc9a957c690659c76c9ae582027b"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-07.pkl",
+      "sha256": "1a7d23c6d4feac5733e1e29266e3b6df1bc1e929645778593e2231a69ae73e5c"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-06.pkl",
+      "sha256": "64fb4a01fe623ff47882be18734b82ef5de495a2eef4ea41d95c24da7503127f"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-05.pkl",
+      "sha256": "d0a6f1622b09fec2b0ff3fe366862bfa4564e2e9969317586e6650387262f09b"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-04.pkl",
+      "sha256": "4066cb844337ebe6b7546e85443d7dccbffb3c4724e01c034790d723f0bc2be0"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-03.pkl",
+      "sha256": "8662de5fe7435f15f8ca833947a6c5ef149aa24ac6fb665f5716aaf3eba0fd71"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-02.pkl",
+      "sha256": "1dc7ddb9e82551a72e273b3102109ed0c28c8b512a12d55b3dad63ff89e288b3"
+    },
+    {
+      "figure": "3",
+      "source": "large_scale/20260422/results/fig2/tfim/step002000/diag_1e-01.pkl",
+      "sha256": "e70c57190a2928bbb54589c07ec1800baaff9dacf6f679b2d689dabee623deed"
+    },
+    {
+      "figure": "4",
+      "source": "paper/figures/data/mssr_ablation/checkpoint_values.csv",
+      "sha256": "3d4e04fbc102a77c8d43751c6ebd6e96878376d13534398df974f8a2715c706d"
+    },
+    {
+      "figure": "4",
+      "source": "paper/figures/data/mssr_ablation/summary.csv",
+      "sha256": "31f4e2957a1ea75c1218a86cb87174e7bac48da6962b168611eff99e694779bb"
+    },
+    {
+      "figure": "4",
+      "source": "paper/figures/data/mssr_ablation/full_sweep.csv",
+      "sha256": "c36b4e6c77db070b77023d52a3f3e18903e5a1b43b0b03f17259ced82e6f607c"
+    },
+    {
+      "figure": "4",
+      "source": "paper/figures/data/mssr_ablation/selected_shifts.csv",
+      "sha256": "6ea77cd46c5eea9e621a46b0ebd32fbe3a7fc7f46dc8112f5f6d9f41e0a1c70d"
+    },
+    {
+      "figure": "5",
+      "source": "paper/figures/data/historical_online/training_curves.csv",
+      "sha256": "dbea3fa85071d2c28c5671de58d991d427e0ffb3d0465c3a09e2e6e17c9098bd"
+    },
+    {
+      "figure": "5",
+      "source": "paper/figures/data/historical_online/endpoint_pairs.csv",
+      "sha256": "fc5617aff88ed9fea4a8b645b84c227f5f2e3c83780445e1b750882080a56663"
+    },
+    {
+      "figure": "5",
+      "source": "artifacts/wall_clock/paired_cluster_summary.csv",
+      "sha256": "650ad71dda05e80e4ee9bedd31348d43866fff96f58bef8b30bfd586c790ca78"
+    }
+  ]
+}

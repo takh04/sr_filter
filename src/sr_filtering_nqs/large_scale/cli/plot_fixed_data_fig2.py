@@ -23,7 +23,6 @@ SYSTEM_ORDER = ("j1j2", "tfim")
 SYSTEM_TITLES = {
     "j1j2": r"$J_1$-$J_2$ (8$\times$8, $J_2/J_1=0.5$)",
     "tfim": r"1D TFIM FNQS ($L=100$)",
-    "ssm": r"Shastry-Sutherland (8$\times$8, $J'/J=0.8$)",
 }
 
 
@@ -34,7 +33,7 @@ def parse_args():
     parser.add_argument(
         "--systems",
         default=",".join(SYSTEM_ORDER),
-        help="Comma-separated systems to include, e.g. j1j2,tfim or ssm.",
+        help="Comma-separated systems to include, e.g. j1j2,tfim.",
     )
     return parser.parse_args()
 

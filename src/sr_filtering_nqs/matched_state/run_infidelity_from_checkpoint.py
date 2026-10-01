@@ -15,7 +15,7 @@ import netket as nk
 import numpy as np
 
 from advanced_drivers.driver import InfidelityOptimizerNG_FS
-from sr_filtering_nqs.small_scale.common import copy_variables, make_model, make_square_j1j2, now, save_pickle
+from sr_filtering_nqs.small_scale.common import copy_variables, make_model, make_square_j1j2_from_metadata, now, save_pickle
 from sr_filtering_nqs.matched_state.common import build_fullsum_state, evaluate_state_match
 
 
@@ -106,7 +106,7 @@ def parse_args() -> argparse.Namespace:
         "--output",
         type=str,
         default=None,
-        help="Path to the match-result pickle. Defaults to figure2/results/<rbm>_to_<vit>_match.pkl.",
+        help="Path to the match-result pickle. Defaults to outputs/matched_state/<rbm>_to_<vit>_match.pkl.",
     )
     parser.add_argument(
         "--vit-checkpoint-output",
@@ -235,11 +235,7 @@ def main() -> None:
 
     rbm_payload = load_pickle(rbm_checkpoint_path)
     system_meta = dict(rbm_payload["system"])
-    hilbert, _, graph, _ = make_square_j1j2(
-        L=int(system_meta["L"]),
-        J1=float(system_meta["J1"]),
-        J2=float(system_meta["J2"]),
-    )
+    hilbert, _, graph, system_meta = make_square_j1j2_from_metadata(system_meta)
 
     rbm_model, rbm_desc = make_model(
         rbm_payload["model_name"],

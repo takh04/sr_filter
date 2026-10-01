@@ -21,3 +21,12 @@ paper/*.fls
 paper/*.log
 paper/*.out
 paper/*.synctex.gz
+
+# Training outputs and external checkpoints are not part of the paper bundle.
+*.pkl
+*.pickle
+*.mpack
+*.ckpt
+*.msgpack
+checkpoints/
+paper/build/

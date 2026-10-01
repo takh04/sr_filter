@@ -12,7 +12,7 @@ from sr_filtering_nqs.large_scale.core.fixed_data_protocol import (  # noqa: E40
     run_fixed_data_fig3,
 )
 
-SYSTEM_CHOICES = ("all", "j1j2", "tfim", "ssm", "shastry")
+SYSTEM_CHOICES = ("all", "j1j2", "tfim")
 
 
 def parse_args():

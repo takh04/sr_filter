@@ -1,0 +1,26 @@
+# Main Figure 4 checkpoint-local protocols; set the named input/workspace variables.
+# CLI protocol names figure2/figure3 are historical and refer to single-shift/mixture diagnostics.
+
+[[runs]]
+id = "tfim_shift_sweep"
+command = "sr-filter fixed-data --protocol figure2 --input-dir \"${SR_FILTER_TFIM_CANONICAL_INPUT:?Set checkpoint input root}\" --output-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/tfim_shift_sweep\" --system tfim --source-train-lambda 1e-4 --repeat-count 20 --jvp-chunk 2000"
+
+[[runs]]
+id = "tfim_k4"
+command = "sr-filter fixed-data --protocol figure3 --input-dir \"${SR_FILTER_TFIM_CANONICAL_INPUT:?Set checkpoint input root}\" --output-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/tfim_k4\" --system tfim --source-train-lambda 1e-4 --repeat-count 20 --jvp-chunk 2000 --diagnostic-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/tfim_shift_sweep\" --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1"
+
+[[runs]]
+id = "tfim_bagged_k4"
+command = "sr-filter fixed-data --protocol bagged --input-dir \"${SR_FILTER_TFIM_CANONICAL_INPUT:?Set checkpoint input root}\" --output-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/tfim_bagged_k4\" --system tfim --source-train-lambda 1e-4 --repeat-count 20 --jvp-chunk 2000 --diagnostic-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/tfim_shift_sweep\" --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --bagged-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1"
+
+[[runs]]
+id = "j1j2_shift_sweep"
+command = "sr-filter fixed-data --protocol figure2 --input-dir \"${SR_FILTER_J1J2_CANONICAL_INPUT:?Set checkpoint input root}\" --output-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/j1j2_shift_sweep\" --system j1j2 --source-train-lambda 1e-4 --repeat-count 20 --jvp-chunk 2000"
+
+[[runs]]
+id = "j1j2_k4"
+command = "sr-filter fixed-data --protocol figure3 --input-dir \"${SR_FILTER_J1J2_CANONICAL_INPUT:?Set checkpoint input root}\" --output-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/j1j2_k4\" --system j1j2 --source-train-lambda 1e-4 --repeat-count 20 --jvp-chunk 2000 --diagnostic-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/j1j2_shift_sweep\" --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1"
+
+[[runs]]
+id = "j1j2_bagged_k4"
+command = "sr-filter fixed-data --protocol bagged --input-dir \"${SR_FILTER_J1J2_CANONICAL_INPUT:?Set checkpoint input root}\" --output-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/j1j2_bagged_k4\" --system j1j2 --source-train-lambda 1e-4 --repeat-count 20 --jvp-chunk 2000 --diagnostic-dir \"${SR_FILTER_FIXED_DATA_WORKSPACE_ROOT:?Set generated diagnostic root}/j1j2_shift_sweep\" --k 4 --lambda-quantiles 0.9,0.7,0.4,0.1 --bagged-lambdas 1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1"

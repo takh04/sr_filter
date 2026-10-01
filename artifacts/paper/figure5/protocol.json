@@ -1,0 +1,29 @@
+{
+  "system": "8x8 J1-J2, J2/J1=0.5, Pauli energy units",
+  "source_step": 2500,
+  "branch_seeds": [
+    104,
+    105,
+    106,
+    107,
+    108
+  ],
+  "sr_updates": 500,
+  "historical_ms_sr_updates": 125,
+  "nominal_sr_equivalent_updates_per_step": {
+    "SR": 1,
+    "MS-SR": 4
+  },
+  "historical_ms_sr_shifts": [
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "axis_semantics": "Counts candidate SR updates. Additional historical callback and sampling work is not included in this nominal count.",
+  "historical_actual_sr_solves_per_step": 5,
+  "historical_actual_sampled_batches_per_step": 6,
+  "training_energy_semantics": "Row update s is measured before applying that update. Plot positions are (s-1) times candidate solves per step.",
+  "endpoint_semantics": "Independent endpoint energy evaluation; individual errors are Monte Carlo standard errors. The paired t interval across all five differences is conditional on one shared source state.",
+  "timing_benchmark": "Separate TFIM experiment for the NTK-quantile implementation, one H100 80GB, medians across three paired device/seed settings."
+}

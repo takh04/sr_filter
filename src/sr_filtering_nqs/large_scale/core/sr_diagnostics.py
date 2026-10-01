@@ -96,12 +96,24 @@ def _jvp_O_delta_many_jitted(apply_fn, params, model_state, samples, delta_bank,
     return jax.vmap(single_prediction)(delta_bank)
 
 
+def _concatenate_jvp_chunks(chunks, *, mode):
+    """Join sample chunks with all real values before all imaginary values."""
+    if mode == 'complex':
+        # Preserve the channel axis, including when the final chunk is shorter.
+        channel_chunks = [
+            chunk.reshape(chunk.shape[:-1] + (2, -1)) for chunk in chunks
+        ]
+        joined = jnp.concatenate(channel_chunks, axis=-1)
+        return joined.reshape(joined.shape[:-2] + (-1,))
+    return jnp.concatenate(chunks, axis=-1)
+
+
 def compute_O_delta_jvp(apply_fn, params, model_state, samples, delta,
                          mode='complex', chunk_size=None):
     """Compute O @ delta via JVP without materializing the full Jacobian O.
 
-    Chunking is handled at Python level: each chunk calls the same JIT-compiled
-    function with identical shapes, so only the first chunk triggers compilation.
+    Chunking is handled at Python level. Full chunks reuse the same JIT-compiled
+    function; a shorter final chunk is compiled separately.
 
     Args:
         apply_fn: Model apply function (variables, x) -> log_psi.
@@ -122,7 +134,7 @@ def compute_O_delta_jvp(apply_fn, params, model_state, samples, delta,
                 apply_fn, params, model_state,
                 samples[i:i + chunk_size], delta, mode)
             chunks.append(chunk_result)
-        return jnp.concatenate(chunks, axis=0)
+        return _concatenate_jvp_chunks(chunks, mode=mode)
     return _jvp_O_delta_jitted(apply_fn, params, model_state, samples, delta, mode)
 
 
@@ -163,7 +175,7 @@ def compute_O_delta_jvp_many(
                 mode,
             )
             chunks.append(chunk_result)
-        return jnp.concatenate(chunks, axis=-1)
+        return _concatenate_jvp_chunks(chunks, mode=mode)
     return _jvp_O_delta_many_jitted(
         apply_fn,
         params,

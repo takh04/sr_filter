@@ -1,12 +1,10 @@
-"""Bagged SR at fixed diagonal shifts, on the fixed-data Figure 3 protocol.
+"""Training-shift and bagged-objective-tuned SR for the Figure 4 ablation.
 
-Extended experiment: the shipped Figure 3 ``indep_single_lambda_uniform_k4``
-baseline is solved at the per-checkpoint validation-tuned lambda_star. This
-module evaluates the same K-batch uniform average at a grid of *fixed* shifts
-(e.g. the training shift 1e-4), reusing the exact batch seeds and chain names
-of ``evaluate_fixed_data_fig3_checkpoint`` so that every repeat is paired with
-the shipped k4_eval.pkl numbers. Bagged at lambda = lambda_star must reproduce
-the shipped bagged baseline exactly, which validates the pairing.
+Each shift uses the same K independent training batches and validation data.
+The tuned shift minimizes the mean validation residual of the uniform bagged
+updates, rather than reusing the shift selected for individual SR updates.
+Both its residual and its variance come from that selected shift. Selection
+uses the evaluation data, so this is an oracle diagnostic baseline.
 """
 
 from __future__ import annotations
@@ -50,7 +48,30 @@ from sr_filtering_nqs.large_scale.core.multilambda_sr import (
     weighted_tree_sum,
 )
 
-DEFAULT_BAGGED_LAMBDAS = (1e-3, 1e-4, 1e-5, 1e-6, 1e-7)
+DEFAULT_BAGGED_LAMBDAS = tuple(10.0**exponent for exponent in range(-8, 0))
+BAGGED_SELECTION_OBJECTIVE = "mean_validation_residual_of_uniform_bagged_updates"
+
+
+def select_bagged_lambda(methods: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Select one shift by its mean bagged residual, keeping its other metrics."""
+    if not methods:
+        raise ValueError("At least one bagged shift is required for selection")
+    candidates = []
+    for method_id, metrics in methods.items():
+        residuals = np.asarray(metrics["r_val_raw_per_repeat"], dtype=np.float64)
+        if residuals.ndim != 1 or residuals.size == 0 or not np.all(np.isfinite(residuals)):
+            raise ValueError(f"Invalid bagged residual repeats for {method_id}")
+        if residuals.size != int(metrics["repeat_count"]):
+            raise ValueError(f"Incomplete bagged residual repeats for {method_id}")
+        mean_residual = float(residuals.mean())
+        if not np.isclose(mean_residual, float(metrics["r_val_raw"]), rtol=1e-12, atol=1e-14):
+            raise ValueError(f"Bagged residual mean disagrees with repeats for {method_id}")
+        shift = float(metrics["bagged_lambda"])
+        if not np.isfinite(shift) or shift <= 0:
+            raise ValueError(f"Invalid bagged shift for {method_id}")
+        candidates.append((mean_residual, shift, method_id))
+    _, _, selected_id = min(candidates)
+    return {"method_id": selected_id, **methods[selected_id]}
 
 
 def bagged_method_id(lam: float, *, k: int) -> str:
@@ -216,6 +237,7 @@ def evaluate_bagged_fixed_lambda_checkpoint(
         "repeat_count": int(repeat_count),
         "bagged_lambdas": [float(lam) for lam in lambdas],
         "lambda_star": float(lambda_star),
+        "lambda_single_sr_tuned": float(lambda_star),
         "quantile_lambda_grid": [float(value) for value in quantile_lambda_grid],
         "lambda_quantiles": [float(value) for value in resolved_quantiles],
         "source_checkpoint": str(Path(ckpt_path).resolve()),
@@ -228,6 +250,12 @@ def evaluate_bagged_fixed_lambda_checkpoint(
         "spectrum_ref_path": str(spectrum_ref_path(base_root, system_name, step)),
         "methods": methods,
     }
+    selected = select_bagged_lambda(methods)
+    payload.update(
+        selection_objective=BAGGED_SELECTION_OBJECTIVE,
+        lambda_bagged_tuned=float(selected["bagged_lambda"]),
+        bagged_tuned=selected,
+    )
     result_path = bagged_lambda_eval_path(result_root, system_name, step, k=int(k))
     atomic_save(payload, result_path)
     return payload

@@ -93,24 +93,62 @@ def make_tfim_chain(
     return hilbert, hamiltonian, graph, meta
 
 
+J1J2_BOND_CONVENTIONS = ("legacy_nnn_open_x", "periodic")
+
+
+def j1j2_bond_convention_from_metadata(system: dict[str, Any]) -> str:
+    """Resolve archived small-system metadata without changing its Hamiltonian.
+
+    Figure 1/2 artifacts predating the convention field have periodic nearest
+    neighbors but no next-nearest-neighbor bonds across the x boundary. They
+    must never be reinterpreted as fully periodic simply because the corrected
+    construction is now available.
+    """
+    convention = system.get("bond_convention", "legacy_nnn_open_x")
+    if convention not in J1J2_BOND_CONVENTIONS:
+        raise ValueError(f"Unknown J1-J2 bond convention: {convention!r}")
+    operator_convention = system.get("operator_convention", "spin_half")
+    if operator_convention != "spin_half":
+        raise ValueError(
+            "The Figure 1/2 builder requires spin_half operators; "
+            f"archive specifies {operator_convention!r}."
+        )
+    return convention
+
+
 def make_square_j1j2(
     L: int = 4,
     J1: float = 1.0,
     J2: float = 0.5,
+    *,
+    bond_convention: str = "legacy_nnn_open_x",
 ) -> tuple[nk.hilbert.Spin, Any, Any, dict[str, Any]]:
+    """Construct the spin-half J1-J2 Hamiltonian with an explicit bond set.
+
+    The default reproduces the archived Figure 1/2 experiments: nearest
+    neighbors are periodic in both directions, while diagonal bonds are open
+    in x and periodic in y. ``periodic`` restores the missing wrapping
+    diagonals. At L=4 the two choices have 24 and 32 J2 bonds, respectively.
+    The default is intentionally retained for archive compatibility.
+    """
+    if bond_convention not in J1J2_BOND_CONVENTIONS:
+        raise ValueError(f"Unknown J1-J2 bond convention: {bond_convention!r}")
     graph = nk.graph.Square(L, pbc=True)
     hilbert = nk.hilbert.Spin(s=0.5, N=graph.n_nodes)
 
     edges_nn = list(graph.edges())
-    edges_nnn: list[tuple[int, int]] = []
+    edges_nnn: set[tuple[int, int]] = set()
     for x in range(L):
         for y in range(L):
             i = x * L + y
             for dx, dy in ((1, 1), (1, -1)):
                 nx_, ny_ = (x + dx) % L, (y + dy) % L
                 j = nx_ * L + ny_
-                if i < j:
-                    edges_nnn.append((i, j))
+                if bond_convention == "periodic" or i < j:
+                    # Canonicalize undirected edges rather than discarding
+                    # wrapping edges whose destination has a smaller index.
+                    edges_nnn.add(tuple(sorted((i, j))))
+    edges_nnn_sorted = sorted(edges_nnn)
 
     bond = np.array(
         [[1, 0, 0, 0], [0, -1, 2, 0], [0, 2, -1, 0], [0, 0, 0, 1]],
@@ -118,12 +156,12 @@ def make_square_j1j2(
     ) / 4.0
     hamiltonian = nk.operator.GraphOperator(
         hilbert,
-        graph=nk.graph.Graph(edges=edges_nn),
+        graph=nk.graph.Graph(edges=edges_nn, n_nodes=graph.n_nodes),
         bond_ops=[J1 * bond],
     )
     hamiltonian += nk.operator.GraphOperator(
         hilbert,
-        graph=nk.graph.Graph(edges=edges_nnn),
+        graph=nk.graph.Graph(edges=edges_nnn_sorted, n_nodes=graph.n_nodes),
         bond_ops=[J2 * bond],
     )
     meta = {
@@ -133,8 +171,38 @@ def make_square_j1j2(
         "dim_h": int(hilbert.n_states),
         "J1": float(J1),
         "J2": float(J2),
+        "operator_convention": "spin_half",
+        "bond_convention": bond_convention,
+        "nn_boundary": "periodic_xy",
+        "nnn_boundary": (
+            "open_x_periodic_y" if bond_convention == "legacy_nnn_open_x"
+            else "periodic_xy"
+        ),
+        "n_bonds_nn": len(edges_nn),
+        "n_bonds_nnn": len(edges_nnn_sorted),
     }
     return hilbert, hamiltonian, graph, meta
+
+
+def make_square_j1j2_from_metadata(
+    system: dict[str, Any],
+) -> tuple[nk.hilbert.Spin, Any, Any, dict[str, Any]]:
+    """Reconstruct an archive and verify any recorded convention metadata."""
+    built = make_square_j1j2(
+        L=int(system["L"]), J1=float(system["J1"]), J2=float(system["J2"]),
+        bond_convention=j1j2_bond_convention_from_metadata(system),
+    )
+    meta = built[3]
+    for key in (
+        "name", "n_spins", "dim_h", "nn_boundary", "nnn_boundary",
+        "n_bonds_nn", "n_bonds_nnn",
+    ):
+        if key in system and system[key] != meta[key]:
+            raise ValueError(
+                f"J1-J2 archive metadata mismatch on {key}: "
+                f"{system[key]!r} != {meta[key]!r}"
+            )
+    return built[:3] + ({**system, **meta},)
 
 
 def make_model(

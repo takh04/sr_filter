@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "source": "Figure5_small/common/sweep_train.py",
+      "source_sha256": "19a101785e24c09c8541807fe029faca13145195f0c03c4c476e55e86f5570ab",
+      "public_module": "sr_filtering_nqs.online_tracking.sweep_train"
+    },
+    {
+      "source": "Figure5_small/common/track_exact_update_trajectory.py",
+      "source_sha256": "3ea29768e36ed05d6bde70f26e442a8e37adc69234be0c6289dc5e4bbb408178",
+      "public_module": "sr_filtering_nqs.online_tracking.track_exact_update_trajectory"
+    }
+  ],
+  "adaptations": [
+    "Package imports replace original checkout path injection.",
+    "Default new-run output/cache directories are under outputs/online_tracking.",
+    "Uses the released callback with corrected complex JVP ordering."
+  ]
+}

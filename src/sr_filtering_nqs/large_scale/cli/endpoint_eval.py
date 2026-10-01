@@ -19,7 +19,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> argparse.ArgumentParser
     run = actions.add_parser("run", help="Evaluate one checkpoint with fresh samples")
     run.add_argument("--checkpoint", type=Path, required=True)
     run.add_argument("--experiment-id", required=True)
-    run.add_argument("--system", choices=("j1j2", "tfim", "ssm"), required=True)
+    run.add_argument("--system", choices=("j1j2", "tfim"), required=True)
     run.add_argument("--rounds", type=int, default=512)
     run.add_argument("--burn-in", type=int, default=5)
     run.add_argument("--seed", type=int, default=12345)

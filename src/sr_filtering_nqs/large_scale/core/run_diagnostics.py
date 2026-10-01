@@ -81,7 +81,7 @@ def make_vit_state(
     seed_override: int | None = None,
 ):
     system_name = normalize_system_name(config["system"])
-    if system_name not in ("j1j2", "ssm"):
+    if system_name != "j1j2":
         raise ValueError(f"run_diagnostics.py only reconstructs ViT checkpoints, got {system_name}")
 
     system = make_system(system_name, L=int(config.get("lattice_size", 8)))

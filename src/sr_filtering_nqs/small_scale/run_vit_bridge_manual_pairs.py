@@ -26,9 +26,9 @@ from sr_filtering_nqs.small_scale.common import (
 from sr_filtering_nqs.small_scale.plot_figure1 import plot_lambda_curves, plot_main_figure, plot_width_sweep
 
 
-DEFAULT_MODELS = ["RBM_a1", "ViT_d2_m24_h4_e4"]
-DEFAULT_RESULTS_DIR = Path("outputs/small_scale/manual_pairs")
-DEFAULT_FIGURES_DIR = Path("outputs/small_scale/manual_pairs/figures")
+DEFAULT_MODELS = ["RBM_a2", "ViT_d2_m24_h4_e4"]
+DEFAULT_RESULTS_DIR = Path("outputs/small_scale/matched_noise")
+DEFAULT_FIGURES_DIR = Path("outputs/small_scale/matched_noise/figures")
 
 
 def parse_args() -> argparse.Namespace:
@@ -42,18 +42,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--J1", type=float, default=1.0, help="Nearest-neighbor coupling.")
     parser.add_argument("--J2", type=float, default=0.5, help="Next-nearest-neighbor coupling.")
     parser.add_argument(
+        "--j1j2-bonds", choices=("legacy_nnn_open_x", "periodic"),
+        default="legacy_nnn_open_x",
+        help=("J2 bond set: archived open-x/periodic-y diagonals (default), "
+              "or all periodic diagonals. J1 bonds are periodic in both cases."),
+    )
+    parser.add_argument(
         "--models",
         nargs=2,
         default=DEFAULT_MODELS,
         help=f"Exactly two models, default: {DEFAULT_MODELS}",
     )
-    parser.add_argument("--ns", type=int, default=2048, help="Fixed exact sample count.")
+    parser.add_argument("--ns", type=int, default=4096, help="Fixed exact sample count.")
     parser.add_argument("--train-samples", type=int, default=4096, help="MCState samples during training.")
-    parser.add_argument("--train-steps", type=int, default=200, help="Maximum SR training steps.")
+    parser.add_argument("--train-steps", type=int, default=490, help="Maximum SR training steps.")
     parser.add_argument("--diag-every", type=int, default=10, help="Exact diagnostic interval.")
-    parser.add_argument("--learning-rate", type=float, default=0.01, help="SR optimizer learning rate.")
+    parser.add_argument("--learning-rate", type=float, default=1e-3, help="SR optimizer learning rate.")
     parser.add_argument("--train-diag-shift", type=float, default=1e-3, help="Training regularization.")
-    parser.add_argument("--n-trials", type=int, default=50, help="Number of exact Born trials.")
+    parser.add_argument("--n-trials", type=int, default=100, help="Number of exact Born trials.")
     parser.add_argument("--n-lambdas", type=int, default=17, help="Number of lambda grid points.")
     parser.add_argument("--lambda-min-exp", type=float, default=-9.0, help="Minimum lambda exponent.")
     parser.add_argument("--lambda-max-exp", type=float, default=-1.0, help="Maximum lambda exponent.")
@@ -255,7 +261,9 @@ def main() -> None:
     requested_steps_by_model[model_specs[0]].add(0)
     requested_steps_by_model[model_specs[1]].add(0)
 
-    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(L=args.L, J1=args.J1, J2=args.J2)
+    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(
+        L=args.L, J1=args.J1, J2=args.J2, bond_convention=args.j1j2_bonds,
+    )
     all_states = np.asarray(hilbert.all_states())
     trained_models = train_models(
         model_specs=model_specs,

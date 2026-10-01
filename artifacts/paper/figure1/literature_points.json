@@ -1,0 +1,202 @@
+{
+  "POINTS": [
+    {
+      "year": 2017,
+      "ratio": 0.1,
+      "label": "Carleo",
+      "kind": "Spin/lattice NQS",
+      "note": "$\\lesssim 1$"
+    },
+    {
+      "year": 2017.35,
+      "ratio": 0.282,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "282/1000",
+      "group": "Saito",
+      "annotate": false
+    },
+    {
+      "year": 2017.94,
+      "ratio": 0.28,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "280/1000",
+      "group": "Saito",
+      "annotate": false
+    },
+    {
+      "year": 2018.04,
+      "ratio": 0.68,
+      "label": "Saito",
+      "kind": "Spin/lattice NQS",
+      "note": "680/1000",
+      "group": "Saito"
+    },
+    {
+      "year": 2019.82,
+      "ratio": 0.0086,
+      "label": "Choo",
+      "kind": "Electronic-structure NQS",
+      "note": "860/100000"
+    },
+    {
+      "year": 2020.0,
+      "ratio": 0.8384,
+      "label": "Zen",
+      "kind": "Spin/lattice NQS",
+      "note": "8384/10000"
+    },
+    {
+      "year": 2020.07,
+      "ratio": 40.0,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "~8000/200",
+      "group": "Hibat-Allah",
+      "annotate": false
+    },
+    {
+      "year": 2020.14,
+      "ratio": 42.0,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "~21000/500",
+      "group": "Hibat-Allah",
+      "annotate": false
+    },
+    {
+      "year": 2020.21,
+      "ratio": 304.0,
+      "label": "Hibat-Allah",
+      "kind": "Spin/lattice NQS",
+      "note": "~152000/500",
+      "group": "Hibat-Allah"
+    },
+    {
+      "year": 2020.34,
+      "ratio": 170.8984375,
+      "label": "Pfau",
+      "kind": "Electronic-structure NQS",
+      "note": "700000/4096"
+    },
+    {
+      "year": 2022,
+      "ratio": 0.034,
+      "label": "Gutierrez",
+      "kind": "Spin/lattice NQS",
+      "note": "1700/50000"
+    },
+    {
+      "year": 2023,
+      "ratio": 399.28173828125,
+      "label": "von Glehn",
+      "kind": "Electronic-structure NQS",
+      "note": "1635458/4096"
+    },
+    {
+      "year": 2023.85,
+      "ratio": 14.233333333333333,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "85400/6000",
+      "group": "Rende",
+      "annotate": false
+    },
+    {
+      "year": 2023.9,
+      "ratio": 31.183333333333334,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "187100/6000",
+      "group": "Rende",
+      "annotate": false
+    },
+    {
+      "year": 2023.95,
+      "ratio": 44.62,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "267720/6000",
+      "group": "Rende",
+      "annotate": false
+    },
+    {
+      "year": 2024.0,
+      "ratio": 165.78333333333333,
+      "label": "Rende",
+      "kind": "Spin/lattice NQS",
+      "note": "994700/6000",
+      "group": "Rende"
+    },
+    {
+      "year": 2024.1,
+      "ratio": 100.0,
+      "label": "Chen",
+      "kind": "Spin/lattice NQS",
+      "note": "1e6/1e4"
+    },
+    {
+      "year": 2024.18,
+      "ratio": 131.00390625,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "67074/512",
+      "group": "Sprague",
+      "annotate": false
+    },
+    {
+      "year": 2024.24,
+      "ratio": 2349.75390625,
+      "label": "",
+      "kind": "Spin/lattice NQS",
+      "note": "1203074/512",
+      "group": "Sprague",
+      "annotate": false
+    },
+    {
+      "year": 2024.3,
+      "ratio": 2469.53125,
+      "label": "Sprague",
+      "kind": "Spin/lattice NQS",
+      "note": "1264400/512",
+      "group": "Sprague"
+    }
+  ],
+  "STYLES": {
+    "Spin/lattice NQS": {
+      "marker": "o",
+      "color": "#2a6f97"
+    },
+    "Electronic-structure NQS": {
+      "marker": "D",
+      "color": "#15803d"
+    }
+  },
+  "GROUP_LABELS": {
+    "Saito": {
+      "x": 2017.82,
+      "y": 1.18,
+      "ha": "right",
+      "va": "bottom"
+    },
+    "Hibat-Allah": {
+      "x": 2019.95,
+      "y": 100,
+      "ha": "right",
+      "va": "center"
+    },
+    "Rende": {
+      "x": 2023.45,
+      "y": 70,
+      "ha": "right",
+      "va": "center"
+    },
+    "Sprague": {
+      "x": 2023.55,
+      "y": 1600,
+      "ha": "right",
+      "va": "center"
+    }
+  }
+}

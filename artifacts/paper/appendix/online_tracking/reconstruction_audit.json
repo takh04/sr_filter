@@ -1,0 +1,28 @@
+{
+  "published_points": 96,
+  "complete_trajectory_triples": 83,
+  "matching_points": 81,
+  "disagreements": [
+    {
+      "point_id": 36,
+      "source_table_ratio": 0.36266314841198555,
+      "trajectory_ratio": 0.4158732450770854,
+      "trajectory_means": {
+        "sr": 0.2925458109399607,
+        "spring": 0.33546826100759736,
+        "mssr_ema_ntk_quantile": 0.12166197572930897
+      }
+    },
+    {
+      "point_id": 38,
+      "source_table_ratio": 0.9819084725565721,
+      "trajectory_ratio": 1.1177260254009191,
+      "trajectory_means": {
+        "sr": 0.17343224420994374,
+        "spring": 0.19742138744604174,
+        "mssr_ema_ntk_quantile": 0.193849732997142
+      }
+    }
+  ],
+  "policy": "Preserve published source points and all available raw records; do not silently replace either. Missing/incomplete records are in archive_import.json."
+}

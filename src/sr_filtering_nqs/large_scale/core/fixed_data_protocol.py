@@ -867,10 +867,12 @@ def split_prepared_batch_for_same_batch_stacking(
     batch: PreparedBatch,
     *,
     holdout_fraction: float = FIG3_STACKING_HOLDOUT_FRACTION,
+    sample_axis_granularity: int | None = None,
 ) -> tuple[PreparedBatch, PreparedBatch, dict[str, int | None]]:
-    sample_axis_granularity = 1
-    if distributed.mode() == "sharding":
-        sample_axis_granularity = max(1, int(distributed.device_count()))
+    if sample_axis_granularity is None:
+        sample_axis_granularity = 1
+        if distributed.mode() == "sharding":
+            sample_axis_granularity = max(1, int(distributed.device_count()))
     counts = holdout_partition_counts(
         int(batch.sample_count),
         n_replicas=batch.n_replicas,
@@ -1780,15 +1782,28 @@ def evaluate_fixed_data_fig3_checkpoint(
             method_deltas[single_id].append(jax.tree_util.tree_map(np.asarray, single_record.delta))
             method_weights[single_id].append([1.0])
 
+            if system_name == "j1j2":
+                # Retain the original eight-device split on any device count:
+                # 6144/2048 for 8192 samples and 4496/1504 for 6000 samples.
+                shared_solve_batch, same_batch_weight_batch, split_counts = (
+                    split_prepared_batch_for_same_batch_stacking(
+                        driver, shared_full_batch, sample_axis_granularity=8
+                    )
+                )
+            else:
+                shared_solve_batch = shared_full_batch
+                same_batch_weight_batch = full_batches[1]
+                split_counts = None
+
             driver.chunk_size_bwd = _compatible_chunk_size_bwd(
                 driver,
                 system_name=system_name,
-                sample_count=int(shared_full_batch.sample_count),
+                sample_count=int(shared_solve_batch.sample_count),
             )
             same_batch_records = [
                 base_solve_record(
                     driver,
-                    shared_full_batch,
+                    shared_solve_batch,
                     diag_shift=float(lam),
                     collect_residual_info=False,
                 )
@@ -1805,7 +1820,6 @@ def evaluate_fixed_data_fig3_checkpoint(
                 [float(value) for value in same_uniform_weights]
             )
 
-            same_batch_weight_batch = full_batches[1]
             driver.chunk_size_bwd = _compatible_chunk_size_bwd(
                 driver,
                 system_name=system_name,
@@ -1824,16 +1838,23 @@ def evaluate_fixed_data_fig3_checkpoint(
                 [float(value) for value in same_stack_weights]
             )
             method_meta[same_uniform_id] = {
-                "solve_sample_count": int(shared_full_batch.sample_count),
+                "solve_sample_count": int(shared_solve_batch.sample_count),
                 "solve_n_replicas": (
-                    None if shared_full_batch.n_replicas is None else int(shared_full_batch.n_replicas)
+                    None if shared_solve_batch.n_replicas is None else int(shared_solve_batch.n_replicas)
                 ),
             }
+            if split_counts is not None:
+                method_meta[same_uniform_id].update(
+                    holdout_sample_count=split_counts["holdout_count"],
+                    holdout_n_replicas=split_counts["holdout_n_replicas"],
+                )
             method_meta[same_stacking_id] = {
                 **method_meta[same_uniform_id],
                 **same_stack_meta,
-                "weight_fit_source": "independent_batch",
-                "weight_fit_batch_slot": 1,
+                "weight_fit_source": (
+                    "heldout_quarter_of_slot0" if system_name == "j1j2" else "independent_batch"
+                ),
+                "weight_fit_batch_slot": 0 if system_name == "j1j2" else 1,
                 "weight_fit_n_replicas": (
                     None
                     if same_batch_weight_batch.n_replicas is None
@@ -1937,8 +1958,10 @@ def evaluate_fixed_data_fig3_checkpoint(
         "source_step": int(step),
         "k": int(k),
         "repeat_count": int(repeat_count),
-        "holdout_fraction": 0.0,
-        "same_batch_weight_fit": "independent_batch",
+        "holdout_fraction": FIG3_STACKING_HOLDOUT_FRACTION if system_name == "j1j2" else 0.0,
+        "same_batch_weight_fit": (
+            "heldout_quarter_of_slot0" if system_name == "j1j2" else "independent_batch"
+        ),
         "lambda_star": float(lambda_star),
         "lambda_grid": [float(value) for value in lambda_grid],
         "lambda_quantiles": [float(value) for value in lambda_quantiles],

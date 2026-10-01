@@ -246,7 +246,7 @@ def infer_n_sites(training: Mapping[str, Any], system_name: str) -> int:
         return int(config["length"])
     if config.get("lattice_size") is not None:
         return int(config["lattice_size"]) ** 2
-    return 64 if system_name in {"j1j2", "ssm", "shastry"} else 100
+    return 64 if system_name == "j1j2" else 100
 
 
 def _sha256(path: Path) -> str:

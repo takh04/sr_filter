@@ -1,0 +1,83 @@
+{
+  "panels": [
+    {
+      "protocol": "matched_noise",
+      "model_desc": "RBM alpha=2",
+      "p_over_ns": 0.2734375,
+      "sigma_gap_sq": 0.8088116239050267,
+      "noise_fraction": 0.1199853175800878,
+      "lambda": 1e-09,
+      "train_residual": 0.33641663267940247,
+      "excess_risk": 0.5331093857828095,
+      "excess_risk_standard_error": 0.007997549575410948,
+      "n_trials": 100,
+      "representative_excess_risk": 0.5290822641638125,
+      "excess_risk_sample_standard_deviation": 0.07997549575410948,
+      "source_figure_displayed_uncertainty": 0.08,
+      "source_figure_uncertainty_convention": "sample_standard_deviation"
+    },
+    {
+      "protocol": "matched_noise",
+      "model_desc": "ViT(d=2,m=24,h=4,e=4)",
+      "p_over_ns": 3.283203125,
+      "sigma_gap_sq": 0.7956950308692727,
+      "noise_fraction": 0.12212766097647283,
+      "lambda": 1e-09,
+      "train_residual": 0.11552650187598773,
+      "excess_risk": 3.3887773052085204,
+      "excess_risk_standard_error": 0.0725774807891744,
+      "n_trials": 100,
+      "representative_excess_risk": 2.9057606009963775,
+      "excess_risk_sample_standard_deviation": 0.7257748078917441,
+      "source_figure_displayed_uncertainty": 0.73,
+      "source_figure_uncertainty_convention": "sample_standard_deviation"
+    },
+    {
+      "protocol": "matched_state",
+      "model_desc": "RBM alpha=2",
+      "p_over_ns": 0.2734375,
+      "sigma_gap_sq": 1.946947965030576,
+      "noise_fraction": 0.3130346935442245,
+      "lambda": 1e-09,
+      "train_residual": 7.252053890294588e-11,
+      "excess_risk": 2.528608204007626,
+      "excess_risk_standard_error": 0.18494476320809983,
+      "n_trials": 10,
+      "representative_excess_risk": 2.556732577768303,
+      "excess_risk_sample_standard_deviation": 0.5848466930581049,
+      "source_figure_displayed_uncertainty": 0.18,
+      "source_figure_uncertainty_convention": "standard_error"
+    },
+    {
+      "protocol": "matched_state",
+      "model_desc": "ViT(d=2,m=24,h=4,e=4)",
+      "p_over_ns": 3.283203125,
+      "sigma_gap_sq": 0.8160812367217991,
+      "noise_fraction": 0.12875035286224298,
+      "lambda": 1e-09,
+      "train_residual": 0.17271949727986097,
+      "excess_risk": 1.5894041120038076,
+      "excess_risk_standard_error": 0.07941983785383634,
+      "n_trials": 10,
+      "representative_excess_risk": 1.5117011025267506,
+      "excess_risk_sample_standard_deviation": 0.2511475790193817,
+      "source_figure_displayed_uncertainty": 0.08,
+      "source_figure_uncertainty_convention": "standard_error"
+    }
+  ],
+  "matched_fidelity": 0.9836261106601136,
+  "sample_count": 4096,
+  "state_count": 65536,
+  "coordinates": "real-amplitude log-wavefunction derivatives; covariance S_A omits phase-output contributions",
+  "array_semantics": {
+    "target": "population-optimal centered amplitude tangent prediction for every basis state",
+    "prediction": "representative near-ridgeless empirical amplitude tangent prediction",
+    "pi": "exact Born probability per basis state",
+    "train_indices": "resampled basis-state indices for representative training batch",
+    "risk_samples": "full-population amplitude excess risk for independent repeated solves"
+  },
+  "uncertainty_provenance": {
+    "public_rendering": "All panels use the sample standard deviation of independent repeated-solve risks divided by sqrt(n_trials).",
+    "source_figure_inconsistency": "The original matched-noise panels displayed sample SD values approximately 0.08 and 0.73, while the manuscript called them standard errors. The true SEMs are approximately 0.008 and 0.073. Matched-state panels already displayed SEM. The public reproduction consistently uses SEM in accordance with the stated definition; the saved numerical risk samples are unchanged."
+  }
+}

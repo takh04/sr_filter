@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pickle
+import pytest
 
 import sr_filtering_nqs.large_scale.core.fixed_data_protocol as fdp
 
@@ -272,7 +273,10 @@ def test_run_fixed_data_fig3_requires_fixed_data_caches(tmp_path, monkeypatch):
     assert results == [{"ok": True}]
 
 
-def test_evaluate_fixed_data_fig3_checkpoint_writes_six_method_schema(tmp_path, monkeypatch):
+@pytest.mark.parametrize("system_name", ["j1j2", "tfim"])
+def test_evaluate_fixed_data_fig3_checkpoint_writes_six_method_schema(
+    tmp_path, monkeypatch, system_name
+):
     ckpt_path = tmp_path / "large_scale" / "j1j2_results" / "1e-04" / "results" / "checkpoints" / "checkpoint_step000900.pkl"
     _touch(ckpt_path)
 
@@ -327,12 +331,28 @@ def test_evaluate_fixed_data_fig3_checkpoint_writes_six_method_schema(tmp_path, 
         )
 
     monkeypatch.setattr(fdp, "_sample_live_prepared_batch", fake_sample_live_prepared_batch)
+    solve_batches = []
+
+    def fake_split(driver, batch, *, sample_axis_granularity):
+        assert batch.slot_index == 0
+        assert sample_axis_granularity == 8
+        return (
+            SimpleNamespace(sample_count=6, n_replicas=None, slot_index=0),
+            SimpleNamespace(sample_count=2, n_replicas=None, slot_index=0),
+            {"solve_count": 6, "holdout_count": 2,
+             "solve_n_replicas": None, "holdout_n_replicas": None},
+        )
+
+    monkeypatch.setattr(fdp, "split_prepared_batch_for_same_batch_stacking", fake_split)
+
+    def fake_solve(driver, batch, diag_shift, collect_residual_info):
+        solve_batches.append(batch)
+        return SimpleNamespace(delta=np.array([float(diag_shift)], dtype=np.float64))
+
     monkeypatch.setattr(
         fdp,
         "base_solve_record",
-        lambda driver, batch, diag_shift, collect_residual_info: SimpleNamespace(
-            delta=np.array([float(diag_shift)], dtype=np.float64)
-        ),
+        fake_solve,
     )
     monkeypatch.setattr(
         fdp,
@@ -341,8 +361,9 @@ def test_evaluate_fixed_data_fig3_checkpoint_writes_six_method_schema(tmp_path, 
     )
 
     def fake_same_batch_stacking_weights(driver, weight_batch, deltas):
-        assert weight_batch.slot_index == 1
-        return np.array([0.1, 0.2, 0.3, 0.4]), {"weight_fit_samples": 8}
+        assert weight_batch.slot_index == (0 if system_name == "j1j2" else 1)
+        assert weight_batch.sample_count == (2 if system_name == "j1j2" else 8)
+        return np.array([0.1, 0.2, 0.3, 0.4]), {"weight_fit_samples": weight_batch.sample_count}
 
     monkeypatch.setattr(fdp, "compute_same_batch_stacking_weights", fake_same_batch_stacking_weights)
     monkeypatch.setattr(
@@ -388,13 +409,21 @@ def test_evaluate_fixed_data_fig3_checkpoint_writes_six_method_schema(tmp_path, 
     payload = fdp.evaluate_fixed_data_fig3_checkpoint(
         ckpt_path,
         base_root=tmp_path / "large_scale",
-        system_name="j1j2",
+        system_name=system_name,
         repeat_count=1,
     )
 
     assert tuple(payload["methods"]) == fdp.FIG3_METHOD_IDS
     same_batch_meta = payload["methods"]["same_batch_multilambda_stacking_k4"]["method_meta"]
-    assert same_batch_meta["solve_sample_count"] == 8
-    assert same_batch_meta["weight_fit_samples"] == 8
-    assert same_batch_meta["weight_fit_source"] == "independent_batch"
-    assert same_batch_meta["weight_fit_batch_slot"] == 1
+    if system_name == "j1j2":
+        assert same_batch_meta["solve_sample_count"] == 6
+        assert same_batch_meta["weight_fit_samples"] == 2
+        assert same_batch_meta["weight_fit_source"] == "heldout_quarter_of_slot0"
+        assert same_batch_meta["weight_fit_batch_slot"] == 0
+        assert [batch.sample_count for batch in solve_batches] == [8, 6, 6, 6, 6] + [8] * 8
+    else:
+        assert same_batch_meta["solve_sample_count"] == 8
+        assert same_batch_meta["weight_fit_samples"] == 8
+        assert same_batch_meta["weight_fit_source"] == "independent_batch"
+        assert same_batch_meta["weight_fit_batch_slot"] == 1
+        assert [batch.sample_count for batch in solve_batches] == [8] * 13

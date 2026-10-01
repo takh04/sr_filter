@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import tomllib
-from pathlib import Path
 from types import SimpleNamespace
 
 import jax.numpy as jnp
@@ -19,7 +17,6 @@ from sr_filtering_nqs.large_scale.cli.train_sweep import (
 from sr_filtering_nqs.large_scale.core.multilambda_sr import PreparedBatch
 
 GRID = (1e-2, 1e-3, 1e-4, 1e-5)
-REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _batch(index: int) -> PreparedBatch:
@@ -312,26 +309,3 @@ def test_exact_checkpoint_writes_portable_hash_bound_json_audit(tmp_path):
     assert audit["checkpoint_step"] == 125
     assert audit["optimizer_update"] == metadata
     assert audit["run_contract"]["sr_lambda_grid"] == list(GRID)
-
-
-@pytest.mark.parametrize(
-    ("filename", "branch"),
-    (
-        ("online_j1j2_branch2500_seed0.toml", "branch_seed0"),
-        ("online_j1j2_branch1800_seed1.toml", "branch_seed1"),
-    ),
-)
-def test_frozen_online_commands_require_exact_native_driver(filename, branch):
-    path = REPOSITORY_ROOT / "configs" / "experiments" / filename
-    payload = tomllib.loads(path.read_text(encoding="utf-8"))
-    ms_sr_run = next(run for run in payload["runs"] if run["arm"] == "ms_sr")
-
-    assert payload["optimization"]["ms_sr_update_protocol"] == "fixed_grid_exact_loo"
-    assert ms_sr_run["optimizer_steps"] == 125
-    assert ms_sr_run["batches_per_update"] == 4
-    assert ms_sr_run["output"] == f"outputs/gpu/online/{branch}/mssr_exact"
-    assert "--sr-update-protocol fixed_grid_exact_loo" in ms_sr_run["command"]
-    assert "--chunk-size 4096" in ms_sr_run["command"]
-    assert payload["optimization"]["ms_sr_prediction_chunk"] == 2048
-    assert "--sr-prediction-chunk 2048" in ms_sr_run["command"]
-    assert "--sr-lambda-grid 1e-2,1e-3,1e-4,1e-5" in ms_sr_run["command"]

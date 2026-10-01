@@ -59,7 +59,6 @@ from sr_filtering_nqs.large_scale.core.common import (
     VIT_EXPANSION,
     VIT_HEADS,
     WARMUP_STEPS,
-    default_pii_tau,
     make_system,
     normalize_system_name,
     phase_specs_for_system,
@@ -75,7 +74,6 @@ from sr_filtering_nqs.large_scale.core.online_mssr import (
     FixedGridExactLOOMSSRDriver,
     validate_online_mssr_configuration,
 )
-from sr_filtering_nqs.large_scale.core.pii_update import PIIUpdateCallback, RGNUpdateCallback
 
 
 CSV_HEADER = [
@@ -307,28 +305,8 @@ def _multilambda_checkpoint_info(driver):
     return json_ready(multilambda)
 
 
-def _pii_checkpoint_info(driver):
-    info = getattr(driver, "info", None)
-    if not isinstance(info, dict):
-        return None
-    pii = info.get("pii")
-    if pii is None:
-        return None
-    return json_ready(pii)
-
-
-def _rgn_checkpoint_info(driver):
-    info = getattr(driver, "info", None)
-    if not isinstance(info, dict):
-        return None
-    rgn = info.get("rgn")
-    if rgn is None:
-        return None
-    return json_ready(rgn)
-
-
 def _optimizer_checkpoint_info(driver):
-    return _rgn_checkpoint_info(driver) or _pii_checkpoint_info(driver) or _multilambda_checkpoint_info(driver)
+    return _multilambda_checkpoint_info(driver)
 
 
 def _effective_driver_diag_shift(sr_variant: str, diag_shift: float | None, sr_lambda_grid) -> float:
@@ -366,8 +344,6 @@ def save_checkpoint(results_dir: Path, step: int, phase_spec: dict, driver, run_
         "config": checkpoint_config(run_config, phase_spec, step),
         "train_metrics": metrics,
         "multilambda": _multilambda_checkpoint_info(driver),
-        "pii": _pii_checkpoint_info(driver),
-        "rgn": _rgn_checkpoint_info(driver),
         "optimizer_update": _optimizer_checkpoint_info(driver),
     }
     atomic_write_pickle(checkpoint_path, payload)
@@ -387,8 +363,6 @@ def save_latest_checkpoint(results_dir: Path, step: int, phase_spec: dict, drive
         "config": checkpoint_config(run_config, phase_spec, step),
         "train_metrics": metrics,
         "multilambda": _multilambda_checkpoint_info(driver),
-        "pii": _pii_checkpoint_info(driver),
-        "rgn": _rgn_checkpoint_info(driver),
         "optimizer_update": _optimizer_checkpoint_info(driver),
     }
     atomic_write_pickle(checkpoint_path, payload)
@@ -410,8 +384,6 @@ def update_summary(results_dir: Path, run_config: dict, *, status: str, latest_m
         "sr_update_protocol": run_config["sr_update_protocol"],
         "ngd_method": run_config["ngd_method"],
         "spring_momentum": run_config["spring_momentum"],
-        "pii_tau": run_config["pii_tau"],
-        "pii_diag_shift": run_config["pii_diag_shift"],
         "init_from": run_config["init_from"],
         "init_from_step": run_config["init_from_step"],
         "total_steps": run_config["total_steps"],
@@ -510,7 +482,7 @@ class TrainMetricsCallback(AbstractCallback, mutable=True):
         completed_step = int(step) + 1
         optimizer_update = None
         if isinstance(getattr(driver, "info", None), dict):
-            optimizer_update = driver.info.get("rgn") or driver.info.get("pii") or driver.info.get("multilambda")
+            optimizer_update = driver.info.get("multilambda")
 
         if isinstance(optimizer_update, dict) and isinstance(optimizer_update.get("train_metrics"), dict):
             train_metrics = {
@@ -622,8 +594,8 @@ class TrainMetricsCallback(AbstractCallback, mutable=True):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Canonical large-scale ViT trainer for J1J2/SSM")
-    parser.add_argument("--system", required=True, choices=["j1j2", "ssm", "shastry"])
+    parser = argparse.ArgumentParser(description="Canonical large-scale J1J2 ViT trainer")
+    parser.add_argument("--system", required=True, choices=["j1j2"])
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("--diag-shift", type=float, help="Single lambda value")
     group.add_argument("--sweep", action="store_true", help="Run the full lambda grid")
@@ -667,7 +639,7 @@ def parse_args():
         "--lattice-size",
         type=int,
         default=LATTICE_SIZE,
-        help="Linear lattice size for J1J2/SSM ViT systems. Defaults to the canonical large-scale size.",
+        help="Linear lattice size for the J1J2 ViT system. Defaults to the canonical large-scale size.",
     )
     parser.add_argument("--chunk-size", type=int, default=4096)
     parser.add_argument(
@@ -729,8 +701,6 @@ def parse_args():
     parser.add_argument("--ngd-method", type=str, default="sr", choices=NGD_METHODS)
     parser.add_argument("--spring-momentum", type=float, default=0.9)
     parser.add_argument("--spring-proj-reg", type=float, default=None)
-    parser.add_argument("--pii-tau", type=float, default=None)
-    parser.add_argument("--pii-diag-shift", type=float, default=0.0)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--fail-fast", action="store_true")
     return parser.parse_args()
@@ -744,7 +714,6 @@ def build_run_config(
     phase_specs: tuple[dict, ...],
     checkpoint_steps: tuple[int, ...],
     n_sites: int,
-    pii_tau: float | None = None,
     init_from_step: int | None = None,
 ):
     run_total_steps = int(sum(spec["length"] for spec in phase_specs))
@@ -783,8 +752,6 @@ def build_run_config(
         "spring_proj_reg": (
             None if args.spring_proj_reg is None else float(args.spring_proj_reg)
         ),
-        "pii_tau": None if pii_tau is None else float(pii_tau),
-        "pii_diag_shift": float(args.pii_diag_shift),
         "init_from": args.init_from,
         "init_from_step": init_from_step,
         "lattice_size": int(args.lattice_size),
@@ -960,13 +927,6 @@ def run_single(args, system_name: str, diag_shift: float):
             system=system,
         )
         base_model = base_network.network
-        pii_tau = None
-        if args.ngd_method == "pii":
-            pii_tau = (
-                float(args.pii_tau)
-                if args.pii_tau is not None
-                else default_pii_tau(system_name, system.graph.n_nodes)
-            )
         run_config = build_run_config(
             args,
             system_name=system_name,
@@ -974,7 +934,6 @@ def run_single(args, system_name: str, diag_shift: float):
             phase_specs=phase_specs,
             checkpoint_steps=checkpoint_steps,
             n_sites=system.graph.n_nodes,
-            pii_tau=pii_tau,
             init_from_step=resume_state.source_step if args.init_from is not None else None,
         )
         if args.resume is not None:
@@ -1029,8 +988,6 @@ def run_single(args, system_name: str, diag_shift: float):
             "NGD method: "
             f"{run_config['ngd_method']} "
             f"spring_momentum={run_config['spring_momentum']} "
-            f"pii_tau={run_config['pii_tau']} "
-            f"pii_diag_shift={run_config['pii_diag_shift']}"
         )
         if run_config["latest_checkpoint_every"] > 0:
             print(
@@ -1146,22 +1103,7 @@ def run_single(args, system_name: str, diag_shift: float):
                 run_start_time=run_start_time,
             )
             callbacks = [callback]
-            if run_config["ngd_method"] == "pii":
-                callbacks.insert(
-                    0,
-                    PIIUpdateCallback(
-                        tau=run_config["pii_tau"],
-                        diag_shift=run_config["pii_diag_shift"],
-                    ),
-                )
-            elif run_config["ngd_method"] == "rgn":
-                callbacks.insert(
-                    0,
-                    RGNUpdateCallback(
-                        diag_shift=run_config["pii_diag_shift"],
-                    ),
-                )
-            elif (
+            if (
                 run_config["sr_variant"] != "single"
                 and run_config["sr_update_protocol"] == DIAGNOSTIC_CALLBACK_PROTOCOL
             ):

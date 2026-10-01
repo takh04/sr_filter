@@ -58,6 +58,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--J1", type=float, default=1.0, help="Nearest-neighbor coupling.")
     parser.add_argument("--J2", type=float, default=0.5, help="Next-nearest-neighbor coupling.")
     parser.add_argument(
+        "--j1j2-bonds", choices=("legacy_nnn_open_x", "periodic"),
+        default="legacy_nnn_open_x",
+        help=("J2 bond set: archived open-x/periodic-y diagonals (default), "
+              "or all periodic diagonals. J1 bonds are periodic in both cases."),
+    )
+    parser.add_argument(
         "--rbm-model",
         type=str,
         default="RBM_a1",
@@ -183,7 +189,7 @@ def parse_args() -> argparse.Namespace:
         "--output",
         type=str,
         default=None,
-        help="Output pickle path. Defaults to figure2/results/j1j2_matched_state_ns{ns}.pkl",
+        help="Output pickle path. Defaults to outputs/matched_state/j1j2_matched_state_ns{ns}.pkl",
     )
     parser.add_argument(
         "--checkpoint-dir",
@@ -211,7 +217,9 @@ def main() -> None:
         if args.lambda_values is not None
         else np.logspace(args.lambda_min_exp, args.lambda_max_exp, args.n_lambdas)
     )
-    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(L=args.L, J1=args.J1, J2=args.J2)
+    hilbert, hamiltonian, graph, system_meta = make_square_j1j2(
+        L=args.L, J1=args.J1, J2=args.J2, bond_convention=args.j1j2_bonds,
+    )
     all_states = np.asarray(hilbert.all_states())
     output_path = (
         Path(args.output)

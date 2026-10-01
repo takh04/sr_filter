@@ -8,7 +8,7 @@ unpublished experiment branches are not supported.
 
 ## Reporting a vulnerability
 
-Please report vulnerabilities privately to `takh0404@yonsei.ac.kr`; do not
+Please report vulnerabilities privately to `tak.hur@uwaterloo.ca`; do not
 open a public issue first. Include a minimal reproducer, affected version or
 commit, impact, and any suggested mitigation. Do not include credentials,
 private checkpoints, or personal data.
@@ -39,15 +39,13 @@ The following invariants should hold:
 
 ## Checkpoint safety
 
-Historical experiment checkpoints and the curated small-scale artifacts can
-contain Python pickle payloads. Pickle deserialization can execute arbitrary
+External experiment checkpoints can contain Python pickle payloads. The bundled
+figure data do not use pickle. Pickle deserialization can execute arbitrary
 code. The artifact fetch command verifies bytes but never deserializes them.
 Commands that accept a pickle or checkpoint path are trusted-input interfaces
 and may deserialize it without sandboxing or another confirmation prompt.
 
-Only invoke those commands on project artifacts obtained from the documented
-release, after verifying them against the checked-in manifest, or on files you
-created and trust. A matching checksum establishes identity, not safety; a
+Only invoke those commands on files you created and trust. A matching checksum establishes identity, not safety; a
 third party can publish a malicious file and its checksum together. Run
 research workloads with least privilege and avoid mounting credentials or
 unrelated data into the process.

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = "Apache-2.0"
 authors = [
-    { name = "Tak Hur", email = "takh0404@yonsei.ac.kr" },
+    { name = "Tak Hur", email = "tak.hur@uwaterloo.ca" },
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

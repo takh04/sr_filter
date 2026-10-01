@@ -5,19 +5,18 @@ type: software
 authors:
   - family-names: Hur
     given-names: Tak
-    email: takh0404@yonsei.ac.kr
-    affiliation: "Department of Statistics and Data Science, Yonsei University"
+    email: tak.hur@uwaterloo.ca
+    affiliation: "Department of Applied Mathematics, University of Waterloo"
 repository-code: "https://github.com/takh04/sr_filter"
 url: "https://github.com/takh04/sr_filter"
 license: Apache-2.0
 version: 0.1.0
-date-released: "2026-08-21"
 preferred-citation:
   type: article
   title: "Stochastic Reconfiguration as Statistical Filtering for Overparameterized Neural Quantum States"
   authors:
     - family-names: Hur
       given-names: Tak
-      email: takh0404@yonsei.ac.kr
-      affiliation: "Department of Statistics and Data Science, Yonsei University"
+      email: tak.hur@uwaterloo.ca
+      affiliation: "Department of Applied Mathematics, University of Waterloo"
   year: 2026
