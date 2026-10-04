@@ -24,12 +24,12 @@ figures=None)` in `sr_filtering_nqs.paper_figures`.
 | 2 | `figure2/amplitude_diagnostics.npz`, `metadata.json` | Replots the four amplitude-regression diagnostic panels from safe numerical arrays, including repeated-solve risk uncertainties. |
 | 3 | `figure3/checkpoint_metrics.csv`, `residual_repeats.csv` | Reaggregates ten TFIM checkpoints and eight shifts into the residual and minibatch-variance curves. |
 | 4 | `figure4/checkpoint_values.csv`, `summary.csv`, `full_sweep.csv`, `selected_shifts.csv` | Reaggregates the corrected seven-method TFIM/J1-J2 ablation; the tuned-bagging shift minimizes the bagged residual itself. |
-| 5 | `figure5/training_curves.csv`, `endpoint_pairs.csv`, `paired_timing.csv`, `timing_summary.csv`, `protocol.json` | Replots the five paired historical J1-J2 continuations and writes the endpoint and separate TFIM timing tables. The manuscript TeX assembles panels A–C. |
+| 5 | `figure5/training_curves.csv`, `endpoint_pairs.csv`, `paired_timing.csv`, `timing_summary.csv`, `protocol.json` | Replots the five paired historical J1-J2 continuations and writes the endpoint and separate TFIM timing tables. |
 
 The renderer reproduces figure content from saved results; it does not rerun the
 original training, sampling, or checkpoint-dependent diagnostics. Rendered PDF
 layout can vary with Matplotlib/font versions. Figure 2 uses a portable
-four-panel layout. The manuscript figure assets are in `paper/figures`. `source_hashes.json` identifies original inputs
+four-panel layout. `source_hashes.json` identifies original inputs
 before extraction using archive-relative paths; those archived files are not
 required for rendering.
 
@@ -43,10 +43,17 @@ file hashes and missing-file inventory are in `archive_import.json`.
 
 Run `python -m sr_filtering_nqs.appendix_figures --output-dir outputs/appendix`
 to regenerate both appendix plots, or use `sr-filter reproduce --recipe all`
-for every manuscript figure. [Archive coverage](../../docs/archive-coverage.md)
-maps the files to the paper and explains why only 81 of the 96 tracking points
-can currently be recovered independently from the raw records. All 96 points
-are retained in the original source table.
+for every manuscript figure. All 96 tracking points are retained in the original
+source table. The raw archive has 279 of 288 method records; four trajectories
+are incomplete. Of 83 complete three-method comparisons, 81 recover the source
+table and two disagree. `appendix/online_tracking/reconstruction_audit.json`
+records both disagreements, including one that crosses the win threshold.
+
+The original Figure 5 source2500 continuation directories are absent at their
+recorded paths. Training observations, endpoint estimates, protocol, and original
+hashes survive in the bundled tables. The endpoint states and individual
+evaluation replicas are unavailable in this bundle. Trained states and raw
+sample banks are kept separately from the public results.
 
 ## Data conventions
 

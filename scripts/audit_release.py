@@ -6,7 +6,6 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
-import sys
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,12 +14,9 @@ BUNDLE = ROOT / "artifacts" / "paper"
 
 def audit() -> list[str]:
     failures: list[str] = []
-    manuscript = subprocess.run(
-        [sys.executable, str(ROOT / "paper/scripts/sync_arxiv.py"), "--check"],
-        capture_output=True, text=True, check=False,
-    )
-    if manuscript.returncode:
-        failures.append(manuscript.stdout + manuscript.stderr)
+    for name in ("paper", "docs"):
+        if (ROOT / name).exists():
+            failures.append(f"private manuscript/documentation directory in release: {name}")
     manifest_path = BUNDLE / "manifest.json"
     if not manifest_path.is_file():
         return ["missing artifacts/paper/manifest.json"]
@@ -60,7 +56,7 @@ def audit() -> list[str]:
     if result.returncode == 0:
         paths = [ROOT / p for p in result.stdout.decode().split("\0") if p]
     else:
-        paths = [p for folder in ("src", "artifacts", "paper", "scripts")
+        paths = [p for folder in ("src", "artifacts", "scripts")
                  for p in (ROOT / folder).rglob("*") if p.is_file()]
     forbidden = {".pkl", ".pickle", ".mpack", ".ckpt", ".msgpack"}
     for path in paths:
@@ -71,6 +67,8 @@ def audit() -> list[str]:
             failures.append(f"symlink in release: {rel}")
         if path.suffix in forbidden or "checkpoints" in rel.parts:
             failures.append(f"checkpoint/pickle in release: {rel}")
+        if path.suffix.lower() in {".tex", ".bib", ".sty"}:
+            failures.append(f"manuscript source in release: {rel}")
         if path.stat().st_size > 25 * 1024 * 1024:
             failures.append(f"unexpected large file in release: {rel}")
     return failures
