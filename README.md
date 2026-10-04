@@ -60,7 +60,6 @@ and raw sample banks are outside this results bundle.
 
 ```bash
 JAX_PLATFORMS=cpu uv run pytest
-uv run python scripts/audit_release.py
 uv build
 ```
 

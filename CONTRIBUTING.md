@@ -10,8 +10,7 @@ Set up the CPU development environment and run the release checks:
 ```bash
 uv sync --frozen --extra dev
 uv run pytest
-uv run python -m compileall -q src scripts
-uv run python scripts/audit_release.py
+uv run python -m compileall -q src
 ```
 
 Generated outputs belong under `outputs/` and are ignored. Compact artifacts

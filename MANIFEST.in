@@ -2,7 +2,7 @@ include LICENSE NOTICE THIRD_PARTY_NOTICES.md CITATION.cff
 include README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md uv.lock
 recursive-include configs *.toml
 recursive-include artifacts/paper *.csv *.json *.npz *.md
-include scripts/audit_release.py
+prune scripts
 prune paper
 prune docs
 prune outputs

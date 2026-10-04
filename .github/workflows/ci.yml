@@ -12,20 +12,19 @@ permissions:
   contents: read
 
 jobs:
-  release-audit:
+  source-scope:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: "3.12"
-      - run: python scripts/audit_release.py
+      - name: Check public source scope
+        run: |
+          test -z "$(git ls-files -- paper docs scripts '*.tex' '*.bib' '*.sty' '*.pkl' '*.pickle' '*.mpack' '*.ckpt' '*.msgpack' '*/checkpoints/*')"
 
   test:
-    needs: release-audit
+    needs: source-scope
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -47,17 +46,16 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
       - run: uv sync --frozen --extra dev
-      - run: uv run python -m compileall -q src scripts
+      - run: uv run python -m compileall -q src
       - run: uv run sr-filter --help
       - run: uv run pytest
       - run: uv run sr-filter reproduce --recipe all --input-root . --output-dir outputs/ci-figures
-      - run: uv run python scripts/audit_release.py
       - run: git diff --exit-code
       - name: Reject non-ignored untracked files
         run: test -z "$(git status --porcelain --untracked-files=normal)"
 
   package:
-    needs: release-audit
+    needs: source-scope
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

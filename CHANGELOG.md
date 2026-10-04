@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Remove administrative release scripts; keep scientific data and numerical checks.
+
 - Keep manuscript sources and detailed documentation in the private archive.
 - Add the arXiv article citation and audit the public tree for manuscript sources.
 - Preserve the appendix diagnostics, tracking cohort, exact states, and all raw
