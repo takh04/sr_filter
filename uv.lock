@@ -527,7 +527,7 @@ wheels = [
 
 [[package]]
 name = "netket"
-version = "3.21.0"
+version = "3.22.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "einops" },
@@ -547,9 +547,9 @@ dependencies = [
     { name = "sparse" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3f/2f/7165ebf2a6212544b250d3ff8c1a3e4a75150fea713b2acb65bc568055ea/netket-3.21.0.tar.gz", hash = "sha256:6907e6a7b6862bfae27c3dc0b42e7f70064db46c05fa5b08832a588c73a36a72", size = 523108, upload-time = "2025-12-15T08:42:08.883Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3d/7f/97b90cd13edeb2a6f350e31443bec7000c661e8d054ca3103e0893990e23/netket-3.22.4.tar.gz", hash = "sha256:c1b07007d72947d652071fcc86faa9985b30ab10126563da589f2f9accfcf656", size = 612041, upload-time = "2026-08-17T08:39:38.152Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/86/a7/d7d1dd28d6bdc85b8cdb501017d48752ba3972ba49e5f549cab86a8564af/netket-3.21.0-py3-none-any.whl", hash = "sha256:140a352fa92804ffb7ea86a97b24482441725a2271176fe90593eea79970792c", size = 833463, upload-time = "2025-12-15T08:42:06.852Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/12/9d687b92c75f0f4504039fdf2084cb56c4d5b668ef1952d2b01763bd5b28/netket-3.22.4-py3-none-any.whl", hash = "sha256:ac5b358355099db12b6b0337dd73f6c7e98ab294d9c5c2c02724fc10cb180a02", size = 969223, upload-time = "2026-08-17T08:39:36.358Z" },
 ]
 
 [[package]]
@@ -1251,7 +1251,7 @@ requires-dist = [
     { name = "jax", specifier = "==0.7.2" },
     { name = "jax", extras = ["cuda12"], marker = "sys_platform == 'linux' and extra == 'cuda12'", specifier = "==0.7.2" },
     { name = "matplotlib", specifier = ">=3.8" },
-    { name = "netket", specifier = ">=3.21,<3.22" },
+    { name = "netket", specifier = ">=3.21,<3.23" },
     { name = "nqxpack" },
     { name = "numba", specifier = ">=0.61" },
     { name = "numpy" },

@@ -26,7 +26,7 @@ dependencies = [
     "flax>=0.10,<0.13",
     "jax==0.7.2",
     "matplotlib>=3.8",
-    "netket>=3.21,<3.22",
+    "netket>=3.21,<3.23",
     "numba>=0.61",
     "nqxpack",
     "numpy",
